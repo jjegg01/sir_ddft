@@ -1,0 +1,6 @@
+/target
+/sir_ddft/target
+/sir_ddft_js/dist/
+/.vscode
+Cargo.lock
+__pycache__

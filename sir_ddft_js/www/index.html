@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>SIR models</title>
+    <script src="lib/plotly.js/plotly-min.js"></script>
+    <script src="lib/micromodal/micromodal.min.js"></script>
+    <link rel="stylesheet" href="index.css">
+  </head>
+  <body>
+    <noscript>This page contains WebAssembly and JavaScript content, please enable JavaScript in your browser.</noscript>
+    <div id="content">
+      <div id="left_content">
+        <div id="progress_container">
+          <div id="progress">???%</div>
+        </div>
+        <div id="plot_controls">
+          <div>
+            <button id="button_plot_S">Susceptible</button>
+            <button id="button_plot_I">Infected</button>
+            <button id="button_plot_R">Recovered</button>
+          </div>
+          <div>
+            <button id="button_plot_linscale">Linear scale</button>
+            <button id="button_plot_logscale">Logarithmic scale</button>
+            <label for="input_log_min">Lower cutoff for log scale (in powers of 10)</label>
+            <input type="number" id="input_log_min" class="number_input" value="-3">
+          </div>
+        </div>
+        <div id="plot"></div>
+        <div id="plot2"></div>
+      </div>
+      <div id="right_content">
+        <div id="settings">
+          <div class="setting_section">
+            <div class="settings_row">
+              <input type="radio" id="radio_sir" name="sir_model" value="SIR">
+              <label for="radio_sir">SIR</label>
+              <input type="radio" id="radio_sir_diffusion" name="sir_model" value="SIRDIFF">
+              <label for="radio_sir_diffusion">SIR with diffusion</label>
+              <input type="radio" id="radio_sir_ddft" name="sir_model" value="SIRDDFT" checked>
+              <label for="radio_sir_ddft">SIR DDFT</label>
+            </div>
+          </div>
+          <div class="section_title">Simulation goal
+            <dfn class="tooltip tooltip_down">
+              <span class="tooltip_icon">?</span>
+              <span role="tooltip">
+                In this section you can set the total time of simulation as well as the number of
+                samples you wish to take for display.
+              </span>
+            </dfn>
+          </div>
+          <div class="setting_section">
+            <div class="settings_row">
+              <label for="input_end_time">Simulation time (days)</label>
+              <input type="number" id="input_end_time" class="number_input" value="100">
+              <label for="input_init_S" style="padding-left: 12pt;">Number of plot points</label>
+              <input type="number" id="input_plot_points" class="number_input" value="400" step="1">
+            </div>
+          </div>
+          <div class="section_title">Initial conditions (SIR)
+            <dfn class="tooltip tooltip_down">
+              <span class="tooltip_icon">?</span>
+              <span role="tooltip">
+                In this section you can set the initial condition for simulations of the SIR model.
+                Typically one sets these values as population percentages (e.g. an infected
+                value of 0.001 corresponds to an infection of 0.1% of the population).
+              </span>
+            </dfn>
+          </div>
+          <div class="setting_section">
+            <div class="settings_block">
+              <div class="settings_row">
+                <label for="input_init_S">Initial Susceptible</label>
+                <input type="number" id="input_init_S" class="number_input" value="0.999" step="0.1">
+              </div>
+              <div class="settings_row">
+                <label for="input_init_I">Initial Infected</label>
+                <input type="number" id="input_init_I" class="number_input" value="0.001" step="0.1">
+              </div>
+              <div class="settings_row">
+                <label for="input_init_R">Initial Recovered</label>
+                <input type="number" id="input_init_R" class="number_input" value="0.0" step="0.1">
+              </div>
+            </div>
+          </div>
+          <div class="section_title">Initial conditions (SIR with diffusion & SIR DDFT)
+            <dfn class="tooltip tooltip_down tooltip_left">
+              <span class="tooltip_icon">?</span>
+              <span role="tooltip">
+                In this section you can set the initial condition for simulations of the spatially
+                extended SIR models. Here the interpretation of the values is slightly more complicated,
+                since <i>S</i>, <i>I</i> and <i>R</i> are density fields, i.e. the population ratio per
+                unit element of the domain.
+              </span>
+            </dfn>
+          </div>
+          <div class="setting_section">
+            <div class="settings_row">
+              <input type="radio" id="radio_1d" name="dimensionality" value="1D">
+              <label for="radio_1d">1D</label>
+              <input type="radio" id="radio_2d" name="dimensionality" value="2D" checked>
+              <label for="radio_2d">2D (square domain)</label>
+            </div>
+            <div class="settings_row">
+              <label for="input_grid_lo">Grid limits: From</label>
+              <input type="number" id="input_grid_lo" class="number_input" value="0.0" step="0.1">
+              <label for="input_grid_hi">to</label>
+              <input type="number" id="input_grid_hi" class="number_input" value="1.0" step="0.1">
+            </div>
+            <div class="settings_row">
+              <label for="input_grid_dx">Number of gridpoints
+                <dfn class="tooltip">
+                  <span class="tooltip_icon">?</span>
+                  <span role="tooltip">
+                    Be careful not to set this value too high for 2D simulations as it causes a
+                    massive slowdown of the simulation and will create very unresponsive plots.
+                  </span>
+                </dfn>
+              </label>
+              <!-- <input type="number" id="input_grid_num" class="number_input" value="256" step="1"> -->
+              <input type="number" id="input_grid_num" class="number_input" value="64" step="1">
+            </div>
+            <label for="input_initfunc" style="text-align: center;">JavaScript initializer function
+              <dfn class="tooltip">
+                <span class="tooltip_icon">?</span>
+                <span role="tooltip">
+                  Here you can enter JavaScript code that calculates the S, I and R values for every
+                  gridpoint. The available parameters are x in 1D and x, y in 2D. The function must
+                  return a tuple [S,I,R]. For ease of use we recommend the wizard that can generate
+                  appropriate code for constant and central Gaussian distributions.
+                </span>
+              </dfn><br>
+            <textarea id="input_initfunc" name="input_initfunc" rows="5" cols="60">
+let S = 1.0;
+let I = 0.1*Math.exp(-(Math.pow((x-0.5),2)+Math.pow((y-0.5),2)) * 100.);
+let R = 0.0;
+
+return [S,I,R];
+            </textarea>
+            <div class="settings_row">
+              <button id="button_check_initfunc">Check</button>
+              <button id="button_wizard_initfunc">Wizard</button>
+            </div>
+          </div>
+          <div class="section_title">SIR - Parameters</div>
+          <div class="setting_section">
+            <div class="settings_block">
+              <div class="settings_row">
+                <label for="input_infectivity">
+                  Infectivity parameter
+                  <dfn class="tooltip">
+                    <span id="infectivity_tooltip" class="tooltip_icon">?</span>
+                    <span role="tooltip">In the SIR model the infectivity parameter is the effective 
+                      infectivity rate <i>c</i><sub>eff</sub>, while in the spatial models it is the slightly
+                      less intuitive parameter <i>c</i> which has a dimension of area (or length in 1D) per time.
+                      For a homogeneous distribution <i>c</i> and <i>c</i><sub>eff</sub> are connected simply by
+                      the domain size.
+                      Click on the "?" symbol for calculating <i>c</i> from <i>c</i><sub>eff</sub> for the distribution
+                      used as the initial condition (make sure the initial condition is set correctly before!).
+                      Note that even in the SIR model the choice of normalization of <i>S</i>, <i>I</i> and <i>R</i>
+                      affects <i>c</i><sub>eff</sub>.
+                    </span>
+                  </dfn>
+                </label>
+                <input type="number" id="input_infectivity" class="number_input" value="0.5" step="0.1">
+              </div>
+              <div class="settings_row">
+                <label for="input_recovery">Recovery rate (per day)
+                  <dfn class="tooltip">
+                    <span class="tooltip_icon">?</span>
+                    <span role="tooltip">
+                      This parameter determines the recovery rate, i.e. what share of the infected
+                      recovers per day.
+                    </span>
+                  </dfn>
+                </label>
+                <input type="number" id="input_recovery" class="number_input" value="0.1" step="0.1">
+              </div>
+            </div>
+          </div>
+          <div class="section_title">SIR with Diffusion - Parameters
+            <dfn class="tooltip">
+              <span class="tooltip_icon">?</span>
+              <span role="tooltip">
+                In simplest spatial extension of the SIR model we add diffusion terms that equalizes
+                spatial differences in the <i>S</i>, <i>I</i> and <i>R</i> fields respectively. The
+                strength of this diffusion is determined by the diffusion constants in this section
+                that have a dimension of length squared per time.
+              </span>
+            </dfn>
+          </div>
+          <div class="setting_section">
+            <div class="settings_row">
+              <label for="input_diff_S">Diffusivity S</label>
+              <input type="number" id="input_diff_S" class="number_input" value="0.01" step="0.01">
+              <label for="input_diff_I">Diffusivity I</label>
+              <input type="number" id="input_diff_I" class="number_input" value="0.01" step="0.01">
+              <label for="input_diff_R">Diffusivity R</label>
+              <input type="number" id="input_diff_R" class="number_input" value="0.01" step="0.01">
+            </div>
+          </div>
+          <div class="section_title">SIR DDFT - Parameters
+            <dfn class="tooltip">
+              <span class="tooltip_icon">?</span>
+              <span role="tooltip">
+                The parameters for the SIR DDFT model fall in two categories:
+                The mobilities <i>Γ</i> scale the general strength of the additional terms of this model
+                and thus are a measure for how strong the population is influenced by any repulsive
+                interaction in <i>general</i>.
+                The social distancing and self isolation parameters describe the strength <i>C</i> and 
+                inverse squared range <i>σ</i> of the <i>specific</i> form of repulsion. The strength
+                should be negative for a repulsive interaction.
+              </span>
+            </dfn>
+          </div>
+          <div class="setting_section">
+            <div class="settings_block">
+              <div class="settings_row">
+                <label for="input_mob_S">Mobility S</label>
+                <input type="number" id="input_mob_S" class="number_input" value="1.0" step="0.1">
+                <label for="input_mob_I">Mobility I</label>
+                <input type="number" id="input_mob_I" class="number_input" value="1.0" step="0.1">
+                <label for="input_mob_R">Mobility R</label>
+                <input type="number" id="input_mob_R" class="number_input" value="1.0" step="0.1">
+              </div>
+              <div class="settings_row">
+                <label for="input_amp_sd">Social distancing: strength</label>
+                <input type="number" id="input_amp_sd" class="number_input" value="-10.0" step="0.1">
+                <label for="input_range_sd" style="padding-left: 6pt;">inverse squared range</label>
+                <input type="number" id="input_range_sd" class="number_input" value="100.0" step="0.1">
+              </div>
+              <div class="settings_row">
+                <label for="input_amp_si">Self isolation: strength</label>
+                <input type="number" id="input_amp_si" class="number_input" value="-30.0" step="0.1">
+                <label for="input_range_si" style="padding-left: 6pt;">inverse squared range</label>
+                <input type="number" id="input_range_si" class="number_input" value="100.0" step="0.1">
+              </div>
+            </div>
+          </div>
+          <div class="section_title"></div>
+          <div class="setting_section" id="section_buttons">
+            <div class="settings_row">
+              <button id="button_run">Run simulation</button>
+              <button id="button_abort">Abort</button>
+              <button id="button_export">Export</button>
+              <button id="button_import">Import</button>
+              <button id="button_reset">Reset values</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Dialogs -->
+    <div class="modal" id="modal-initfunc" aria-hidden="true">
+      <div class="modal_overlay" tabindex="-1" data-micromodal-close>
+        <div class="modal_container" role="dialog" aria-modal="true" aria-labelledby="modal-initfunc-title" >
+          <header>
+            <h2 id="modal-initfunc-title">
+              🪄 Initializer function wizard
+            </h2>
+          </header>
+          <div id="modal-initfunc-content">
+            <div>Choose an initialization mode for the S, I and R field:</div>
+            <ul>
+              <li>Constant value across entire grid</li>
+              <li>Gaussian peak around midpoint of grid</li>
+            </ul>
+            <div>
+              <div>
+                <span class="initfunc-fieldtitle">Susceptible:</span>
+                <input type="radio" id="radio_wiz_S_const" name="wiz_S" value="CONST" checked>
+                <label for="radio_wiz_S_const">Constant</label>
+                <input type="radio" id="radio_wiz_S_gauss" name="wiz_S" value="GAUSS">
+                <label for="radio_wiz_S_gauss">Gaussian</label>
+                <div id="div_wiz_S_const">
+                  <label for="radio_wiz_S_const">Constant value</label>
+                  <input type="number" id="input_wiz_S_const" class="number_input" value="1.0" step="0.1">
+                </div>
+                <div id="div_wiz_S_gauss">
+                  <label for="input_wiz_S_gauss_amp">Amplitude</label>
+                  <input type="number" id="input_wiz_S_gauss_amp" class="number_input" value="1.0" step="0.1">
+                  <label for="input_wiz_S_gauss_var">Variance</label>
+                  <input type="number" id="input_wiz_S_gauss_var" class="number_input" value="1.0" step="0.1">
+                </div>
+              </div>
+              <div>
+                <span class="initfunc-fieldtitle">Infected:</span>
+                <input type="radio" id="radio_wiz_I_const" name="wiz_I" value="CONST">
+                <label for="radio_wiz_I_const">Constant</label>
+                <input type="radio" id="radio_wiz_I_gauss" name="wiz_I" value="GAUSS" checked>
+                <label for="radio_wiz_I_gauss">Gaussian</label>
+                <div id="div_wiz_I_const">
+                  <label for="radio_wiz_I_const">Constant value</label>
+                  <input type="number" id="input_wiz_I_const" class="number_input" value="1.0" step="0.1">
+                </div>
+                <div id="div_wiz_I_gauss">
+                  <label for="input_wiz_I_gauss_amp">Amplitude</label>
+                  <input type="number" id="input_wiz_I_gauss_amp" class="number_input" value="1.0" step="0.1">
+                  <label for="input_wiz_I_gauss_var">Variance</label>
+                  <input type="number" id="input_wiz_I_gauss_var" class="number_input" value="1.0" step="0.1">
+                </div>
+              </div>
+              <div>
+                <span class="initfunc-fieldtitle">Recovered:</span>
+                <input type="radio" id="radio_wiz_R_const" name="wiz_R" value="CONST" checked>
+                <label for="radio_wiz_R_const">Constant</label>
+                <input type="radio" id="radio_wiz_R_gauss" name="wiz_R" value="GAUSS">
+                <label for="radio_wiz_R_gauss">Gaussian</label>
+                <div id="div_wiz_R_const">
+                  <label for="radio_wiz_R_const">Constant value</label>
+                  <input type="number" id="input_wiz_R_const" class="number_input" value="0.0" step="0.1">
+                </div>
+                <div id="div_wiz_R_gauss">
+                  <label for="input_wiz_R_gauss_amp">Amplitude</label>
+                  <input type="number" id="input_wiz_R_gauss_amp" class="number_input" value="1.0" step="0.1">
+                  <label for="input_wiz_R_gauss_var">Variance</label>
+                  <input type="number" id="input_wiz_R_gauss_var" class="number_input" value="1.0" step="0.1">
+                </div>
+              </div>
+            </div>
+            <div style="padding-top: 1em;">
+              <button id="button_wizard_finish" aria-label="Close modal">Finish</button>
+              <button aria-label="Close modal" data-micromodal-close>Close</button>
+            </div>
+            <!-- Show correct fields interactively -->
+            <script>
+              const WIZ_CONST = "CONST";
+              const WIZ_GAUSS = "GAUSS";
+              function wizardUpdateParameterInputs() {
+                for(infix of ["S", "I", "R"]) {
+                  let selection = document.querySelector(`input[name="wiz_${infix}"]:checked`).value;
+                  let const_div = document.getElementById(`div_wiz_${infix}_const`);
+                  let gauss_div = document.getElementById(`div_wiz_${infix}_gauss`);
+                  if(selection === WIZ_CONST) {
+                    const_div.style.display = "block";
+                    gauss_div.style.display = "none";
+                  }
+                  else {
+                    const_div.style.display = "none";
+                    gauss_div.style.display = "block";
+                  }
+                }
+              }
+              wizardUpdateParameterInputs();
+              for(infix of ["S", "I", "R"]) {
+                document.getElementById(`radio_wiz_${infix}_const`).onchange = wizardUpdateParameterInputs;
+                document.getElementById(`radio_wiz_${infix}_gauss`).onchange = wizardUpdateParameterInputs;
+              }
+            </script>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal" id="modal-infectivity" aria-hidden="true">
+      <div class="modal_overlay" tabindex="-1" data-micromodal-close>
+        <div class="modal_container" role="dialog" aria-modal="true" aria-labelledby="modal-infectivity-title" >
+          <h2 id="modal-initfunc-title">
+            🪄 Infectivity parameter estimation
+          </h2>
+          <div>
+            You can choose between using the effective infectivity rate <i>c</i><sub>eff</sub>
+            or the effective reproduction number <i>R</i><sub>eff</sub> to estimate the infectivity
+            parameter <i>c</i> for the spatial models based on the distribution given by the initial condition.
+          </div>
+          <div>
+            <span class="infectivity-fieldtitle">Effective parameter:</span>
+            <input type="radio" id="radio_inf_ceff" name="wiz_inf" value="c_eff" checked>
+            <label for="radio_inf_ceff"><i>c</i><sub>eff</sub></label>
+            <input type="radio" id="radio_inf_Reff" name="wiz_inf" value="R_eff" checked>
+            <label for="radio_inf_Reff"><i>R<sub>eff</sub></i></label>
+          </div>
+          <div>
+            <input type="number" id="infectivity_wiz_value" class="number_input" value="0.5" step="0.1">
+          </div>
+          <div style="padding-top: 1em;">
+            <button id="button_infectivity_finish" aria-label="Close modal">Finish</button>
+            <button aria-label="Close modal" data-micromodal-close>Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal" id="modal-importjson" aria-hidden="true">
+      <div class="modal_overlay" tabindex="-1" data-micromodal-close>
+        <div class="modal_container" role="dialog" aria-modal="true" aria-labelledby="modal-infectivity-title" >
+          <h2 id="modal-initfunc-title">
+            🪄 Import model parameters
+          </h2>
+          <div>
+            Copy the JSON encoded model parameters into the textbox below.
+          </div>
+          <textarea id="input_importjson" name="input_importjson" rows="5" cols="60" style="width: 90%"></textarea>
+          <div style="padding-top: 1em;">
+            <button id="button_importjson_finish" aria-label="Close modal">Finish</button>
+            <button aria-label="Close modal" data-micromodal-close>Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="footer">
+      <div>
+        For more information on the models behind this demo, see 
+        <a href="https://doi.org/10.1038/s41467-020-19024-0">te Vrugt, M., Bickmann, J. & Wittkowski, R.
+          Effects of social distancing and isolation on epidemic spreading modeled via dynamical density functional theory.
+          <i>Nat. Commun.</i> 11, 5576 (2020)
+        </a>.
+      </div>
+      <div>
+        This website is licensed partially under the AGPLv3. You can find all source code at
+        <a href="https://github.com/jjegg01/sir_ddft">https://github.com/jjegg01/sir_ddft</a>.
+        For more advanced users we recommend our Python or Rust implementations found at the same location.
+      </div>
+    </div>
+    <script src="worker_common.js"></script> <!-- We need some functions from here in the main code was well -->
+    <script src="index.js"></script>
+  </body>
+</html>

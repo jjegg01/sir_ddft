@@ -1,0 +1,23 @@
+[package]
+name = "sir_ddft_py"
+version = "1.0.0"
+authors = ["Julian Jeggle <j_jegg01@uni-muenster.de>", "Raphael Wittkowski <raphael.wittkowski@uni-muenster.de>"]
+edition = "2018"
+license = "AGPL-3.0"
+description = "A Rust implementation of the SIR-DDFT model - Python bindings"
+repository = "https://github.com/jjegg01/sir_ddft"
+keywords = ["sir_ddft", "sir", "ddft", "physics", "soft matter", "epidemic", "python"]
+categories = ["science"]
+include = ["src/**/*.rs", "LICENSE", "README.md"]
+
+[lib]
+name = "sir_ddft"
+crate-type = ["cdylib"]
+
+[dependencies.pyo3]
+version = "^0.13"
+features = ["extension-module"]
+
+[dependencies]
+sir_ddft = { path = "../sir_ddft", version = "^1.0" }
+numpy = "^0.13"

@@ -1,0 +1,211 @@
+#content {
+  width: 100%;
+  max-width: 1920px; /* -- TODO: Fix design for large displays -- */
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+  padding-bottom: 30pt;
+  margin: auto;
+}
+
+#footer {
+  font-size: 10pt;
+  width: 100%;
+  text-align: left;
+  border-top: 1px solid black;
+  padding-top: 5pt;
+  position: fixed;
+  padding-bottom: 5pt;
+  bottom: 0;
+  left: 0;
+  background-color: white;
+}
+
+#left_content {
+  display: inline-flex;
+  flex: 1 1 50%;
+  flex-direction: column;
+  align-items: center;
+}
+
+#progress_container {
+  width: 50%;
+  margin-top: 20%;
+  border: solid black 1px;
+  display: none;
+}
+
+#progress {
+  text-align: center;
+  background: #77ff77;
+  white-space: nowrap;
+}
+
+#SIR_plot_chooser {
+  display: none;
+}
+
+#plot {
+  width: 100%;
+  min-height: 40em;
+  display: flex;
+  justify-content: center;
+}
+
+#plot2 {
+  width: 100%;
+  min-height: 20em;
+}
+
+#plot_controls {
+  text-align: center;
+}
+
+#right_content {
+  display: inline;
+  flex: 0 1 auto;
+  border-left: solid black 1px;
+  padding-left: 10px;
+  margin-left: 10px;
+}
+
+#settings {
+  flex-grow: 0;
+  display: inline-block;
+}
+
+.setting_section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.settings_row {
+  display: block;
+}
+
+.settings_block {
+  display: inline-block;
+  text-align: right;
+}
+
+.section_title {
+  white-space: nowrap;
+  border: solid black 1px;
+  border-left: none;
+  border-right: none;
+  margin-bottom: 4px;
+  margin-top: 20px;
+  margin-left: 0;
+  margin-right: 0;
+  text-align: center;
+  width: 100%
+}
+
+.number_input {
+  width: 70px;
+}
+
+/* Hide all invalid fields because step validation is mandatory for number inputs 
+  (for some inexplicable reason) */
+.number_input:invalid:invalid {
+  box-shadow: none;
+}
+
+.number_input:invalid:-moz-submit-invalid {
+  box-shadow: none;
+}
+
+.number_input:invalid:-moz-ui-invalid {
+  box-shadow: none;
+}
+
+/* -- Tooltip -- */
+/* Credit belongs to https://wiki.selfhtml.org/wiki/CSS/Tutorials/Tooltips_mit_CSS */
+
+.tooltip {
+  position: relative;
+  font-style: normal;
+  white-space: normal;
+}
+
+.tooltip span[role=tooltip] {
+  display: none;
+}
+
+.tooltip:hover span[role=tooltip] {
+  display: block;  
+  position: absolute; 
+  bottom: 2em;
+  left: -6em;
+  width: 15em;
+  padding: 0.5em;
+  z-index: 100;
+  color: #000; 
+  background-color: #eeeeee;
+  border: solid 1px #555555;
+  border-radius: 0.2em;
+  text-align: left;
+}
+
+.tooltip_down:hover span[role=tooltip] {
+  bottom: unset;
+  top: 2em;
+}
+
+.tooltip_left:hover span[role=tooltip] {
+  left: -10em;
+}
+
+.tooltip_icon {
+  border: solid black 1px;
+  border-radius: 10px;
+  font-family: sans-serif;
+  padding: 0 4px;
+}
+
+/* -- Modal dialog -- */
+
+.modal {
+  display: none;
+}
+
+.modal.is-open {
+  display: block;
+}
+
+.modal_overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal_container {
+  background-color: #fff;
+  padding: 30px;
+  max-width: 500px;
+  max-height: 100vh;
+  border-radius: 4px;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+#modal-initfunc-title {
+  padding: 0;
+  margin: 0;
+  margin-bottom: 0.5em;
+}
+
+.initfunc-fieldtitle {
+  font-weight: bold;
+}
+
+.infectivity-fieldtitle {
+  font-weight: bold;
+}

@@ -1,0 +1,9 @@
+[workspace]
+members = [
+    "sir_ddft_py",
+    "sir_ddft_js",
+    "sir_ddft"
+]
+
+[profile.release]
+debug = true
