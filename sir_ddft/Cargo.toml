@@ -9,6 +9,7 @@ repository = "https://github.com/jjegg01/sir_ddft"
 keywords = ["sir_ddft", "sir", "ddft", "physics", "soft matter", "epidemic"]
 categories = ["science"]
 include = ["src/**/*.rs", "LICENSE", "README.md"]
+readme = "README.md"
 
 [[bench]]
 name = "sir_ddft_1d"
