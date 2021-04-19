@@ -13,10 +13,12 @@ readme = "README.md"
 
 [[bench]]
 name = "sir_ddft_1d"
+path = "benches/sir_ddft_1d.rs"
 harness = false
 
 [[bench]]
 name = "sir_ddft_2d"
+path = "benches/sir_ddft_2d.rs"
 harness = false
 
 [dependencies]
