@@ -1,3 +1,7 @@
+[![crates.io](https://img.shields.io/crates/v/sir_ddft.svg)](https://crates.io/crates/sir_ddft)
+[![Documentation](https://docs.rs/sir_ddft/badge.svg)](https://docs.rs/sir_ddft/)
+[![Documentation for Python bindings](https://img.shields.io/badge/docs--py-1.0.0-yellow)](https://jjegg01.github.io/sir_ddft/pydoc/)
+
 `sir_ddft` - A Rust implementation of the SIR-DDFT model
 ======================================================
 
@@ -17,7 +21,7 @@ Examples and demo
 -----------------
 Examples of the usage of this library and its bindings can be found in the `examples` subfolder of the corresponding crate.
 
-For ease of use we also include a web-based demonstration at [TODO](todo) which is suitable for small scale / low resolution simulations. For more advanced usage, we recommend using the Rust or Python API.
+For ease of use we also include a [web-based demonstration](https://jjegg01.github.io/sir_ddft/demo/) which is suitable for small scale / low resolution simulations. For more advanced usage, we recommend using the [Rust](https://docs.rs/sir_ddft/) or [Python API](https://jjegg01.github.io/sir_ddft/pydoc/).
 
 License
 -------
