@@ -1,6 +1,7 @@
 [![crates.io](https://img.shields.io/crates/v/sir_ddft.svg)](https://crates.io/crates/sir_ddft)
 [![Documentation](https://docs.rs/sir_ddft/badge.svg)](https://docs.rs/sir_ddft/)
 [![Documentation for Python bindings](https://img.shields.io/badge/docs--py-1.0.0-yellow)](https://jjegg01.github.io/sir_ddft/pydoc/)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4702572.svg)](https://doi.org/10.5281/zenodo.4702572)
 
 `sir_ddft` - A Rust implementation of the SIR-DDFT model
 ======================================================
