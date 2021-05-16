@@ -93,7 +93,7 @@ fn convolve_sirddft(S: &[f64], I: &[f64], R: &[f64], kernel_sd: &[f64], kernel_s
         ($kidx: expr, $idx: expr) => {
             add_contrib($kidx, $idx, kernel_sd, kernel_si, &mut conv_sd_SR, &mut conv_si_I, &mut conv_si_SIR, dx, S, I, R);
         }
-    };
+    }
     // -- end of mess --
     add_contrib_macro!(0,offset);
     for i in 1..(n/2) {

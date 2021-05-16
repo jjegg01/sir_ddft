@@ -128,7 +128,7 @@ pub(crate) fn convolve_2d_parallel(data: &mut[Complex64], kernel_fft: &[Complex6
                 }
             });
         }
-    };
+    }
     process_with_scratch_parallel!(fft, data, scratch);
     transpose_2d(data, n); // Parallelizing matrix transposition is icky
     process_with_scratch_parallel!(fft, data, scratch);

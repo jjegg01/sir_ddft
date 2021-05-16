@@ -16,6 +16,7 @@ use sir_ddft::{SIRParameters, SIRDiffusionParameters, SIRDDFTParameters,
 mod inferno_map;
 use inferno_map::{colormap_inferno, f64_rgb_to_u8_rgb};
 
+#[allow(non_snake_case)]
 pub fn main() {
     const NUM_THREADS: usize = 4;
     let L = 10.0;

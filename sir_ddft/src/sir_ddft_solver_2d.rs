@@ -153,7 +153,7 @@ impl<S> ODEIVP<S> for SIRDDFT2DIVP {
             ($ix: expr, $iy: expr) => {
                 ($ix) + ($iy)*nx;
             }
-        };
+        }
         
         // Calculate contributions for a single row
         let add_contrib = |iy: usize, offset: usize, dS: &mut[f64], dI: &mut[f64], dR: &mut[f64]| {
