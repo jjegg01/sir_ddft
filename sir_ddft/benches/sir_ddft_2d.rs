@@ -22,7 +22,7 @@ fn my_benchmark(c: &mut Criterion) {
     ));
     // Create the IVP and solver
     let mut ivp = SIRDDFT2DIVP::new(sir_params, diff_params, ddft_params, state, NUM_THREADS);
-    let solver = RKF45Solver::<SIRDDFT2DIVP>::new();
+    let mut solver = RKF45Solver::<SIRDDFT2DIVP>::new();
 
     let initial_state = ivp.clone_state();
 

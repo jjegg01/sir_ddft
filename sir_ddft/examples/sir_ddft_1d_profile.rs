@@ -21,7 +21,7 @@ pub fn main() {
     } );
     // Create the IVP and solver
     let mut ivp = SIRDDFT1DIVP::new(sir_params, diff_params, ddft_params, state, NUM_THREADS);
-    let solver = RKF45Solver::<SIRDDFT1DIVP>::new();
+    let mut solver = RKF45Solver::<SIRDDFT1DIVP>::new();
     // Run solver and collect data for plotting
     let (t,state) = ivp.get_result();
     let mut state_matrix = vec![state.I.to_vec()];

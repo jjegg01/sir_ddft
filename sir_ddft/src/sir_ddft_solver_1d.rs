@@ -136,14 +136,13 @@ fn convolve_sirddft(S: &[f64], I: &[f64], R: &[f64], kernel_sd: &[f64], kernel_s
 
 impl<S> ODEIVP<S> for SIRDDFT1DIVP {
     #[allow(non_snake_case)]
-    fn rhs(&mut self, _ : f64, y: &[f64]) -> Vec<f64> {
+    fn rhs(&mut self, _ : f64, y: &[f64], rhs: &mut[f64]) {
         // Number of gridpoints
         let n = y.len() / 3;
         // Split state vector into S,I,R
         let (S,IR) = y.split_at(n);
         let (I,R) = IR.split_at(n);
-        // Allocate and split RHS vector
-        let mut rhs = vec![0.;n*3];
+        // Split RHS vector
         let (dS,dIR) = rhs.split_at_mut(n);
         let (dI,dR) = dIR.split_at_mut(n);
         // Shorthands for parameters
@@ -237,7 +236,6 @@ impl<S> ODEIVP<S> for SIRDDFT1DIVP {
             // TODO: Switch to FFT based convolution
             calc_rhs(0,n,dS,dI,dR);
         }
-        rhs
     }
 
     fn initial_state(&mut self) -> (f64, Vec<f64>) {

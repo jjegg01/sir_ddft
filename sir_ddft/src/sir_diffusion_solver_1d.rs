@@ -49,14 +49,13 @@ pub struct SIRDiffusion1DIVP {
 
 impl<S> ODEIVP<S> for SIRDiffusion1DIVP {
     #[allow(non_snake_case)]
-    fn rhs(&mut self, _ : f64, y: &[f64]) -> Vec<f64> {
+    fn rhs(&mut self, _ : f64, y: &[f64], rhs: &mut[f64]) {
         // Number of gridpoints
         let n = y.len() / 3;
         // Split state vector into S,I,R
         let (S,IR) = y.split_at(n);
         let (I,R) = IR.split_at(n);
-        // Allocate and split RHS vector
-        let mut rhs = vec![0.;n*3];
+        // Split RHS vector
         let (dS,dIR) = rhs.split_at_mut(n);
         let (dI,dR) = dIR.split_at_mut(n);
         // Shorthands for parameters
@@ -85,7 +84,6 @@ impl<S> ODEIVP<S> for SIRDiffusion1DIVP {
             dR[i] = diff_R * laplace_1d(R, prev, i, next, self.dx)
                 + rec_rate * I[i];
         }
-        rhs
     }
 
     fn initial_state(&mut self) -> (f64, Vec<f64>) {

@@ -33,12 +33,14 @@ pub struct SIRODEIVP {
 
 impl<S> ODEIVP<S> for SIRODEIVP {
     #[inline(always)]
-    fn rhs(&mut self, _ : f64, y: &[f64]) -> Vec<f64> {
+    fn rhs(&mut self, _ : f64, y: &[f64], rhs: &mut[f64]) {
         let c = self.param.infection_parameter;
         let w = self.param.recovery_rate;
         #[allow(non_snake_case)]
         let (S,I) = (y[0], y[1]);
-        vec![-c*S*I, c*S*I - w*I, w*I]
+        rhs[0] = -c*S*I;
+        rhs[1] = c*S*I - w*I;
+        rhs[2] = w*I;
     }
 
     #[inline(always)]

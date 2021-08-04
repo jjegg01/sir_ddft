@@ -33,7 +33,7 @@ pub enum StopCondition {
 /// other type is useless in this context anyway.
 pub trait ODEIVP<S> {
     /// Returns right hand side (i.e. the value of `f`) of IVP `y'=f(t,y)`
-    fn rhs(&mut self, t : f64, y: &[f64]) -> Vec<f64>;
+    fn rhs(&mut self, t : f64, y: &[f64], rhs: &mut[f64]);
     /// Returns initial state `(t_0, y_0)` such that `y(t_0) = y_0`
     fn initial_state(&mut self) -> (f64, Vec<f64>);
     /// Called at the end of each integration step (and once for `t_0`)
@@ -48,5 +48,5 @@ pub trait ExplicitODESolver : Sized {
     type Problem : ODEIVP<Self>;
 
     /// Integrate a given IVP with this integrator
-    fn integrate(&self, p : &mut Self::Problem);
+    fn integrate(&mut self, p : &mut Self::Problem);
 }

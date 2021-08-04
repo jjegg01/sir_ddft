@@ -14,13 +14,13 @@ struct TestODE3 {
 
 // Simple test ODE for arctan(t)
 impl<S> ODEIVP<S> for TestODE {
-    fn rhs(&mut self, t : f64, _: &[f64]) -> Vec<f64> {
-        vec![1./(1. + t*t)]
+    fn rhs(&mut self, t : f64, _: &[f64], rhs: &mut [f64]) {
+        rhs[0] = 1./(1. + t*t);
     }
     fn initial_state(&mut self) -> (f64, Vec<f64>) {
         (0., vec![0.])
     }
-    fn end_step(&mut self, t : f64, y: &[f64], _: &S) -> sir_ddft::ode::StopCondition {
+    fn end_step(&mut self, t : f64, y: &[f64], _: &S) -> StopCondition {
         self.result.push((t, y[0]));
         StopCondition::ContinueUntil(10.)
     }
@@ -30,13 +30,14 @@ impl<S> ODEIVP<S> for TestODE {
 
 // Simple test ODE for harmonic oscillator
 impl<S> ODEIVP<S> for TestODE2 {
-    fn rhs(&mut self, _ : f64, y: &[f64]) -> Vec<f64> {
-        vec![y[1], -y[0]]
+    fn rhs(&mut self, _ : f64, y: &[f64], rhs: &mut [f64]) {
+        rhs[0] = y[1];
+        rhs[1] = -y[0];
     }
     fn initial_state(&mut self) -> (f64, Vec<f64>) {
         (0., vec![1., 0.])
     }
-    fn end_step(&mut self, t : f64, y: &[f64], _: &S) -> sir_ddft::ode::StopCondition {
+    fn end_step(&mut self, t : f64, y: &[f64], _: &S) -> StopCondition {
         self.result.push((t, y[0]));
         StopCondition::ContinueUntil(10.)
     }
@@ -46,8 +47,8 @@ impl<S> ODEIVP<S> for TestODE2 {
 
 // Simple exponential growth ode
 impl<S> ODEIVP<S> for TestODE3 {
-    fn rhs(&mut self, _ : f64, y: &[f64]) -> Vec<f64> {
-        vec![y[0]]
+    fn rhs(&mut self, _ : f64, y: &[f64], rhs: &mut [f64]) {
+        rhs[0] = y[0];
     }
     fn initial_state(&mut self) -> (f64, Vec<f64>) {
         (0., vec![1.])
@@ -70,9 +71,9 @@ pub fn main() {
     let mut ode3 = TestODE3 {
         result: vec!()
     };
-    let solver = RKF45Solver::new();
-    let solver2 = RKF45Solver::new();
-    let solver3 = RKF45Solver::new();
+    let mut solver = RKF45Solver::new();
+    let mut solver2 = RKF45Solver::new();
+    let mut solver3 = RKF45Solver::new();
     solver.integrate(&mut ode);
     solver2.integrate(&mut ode2);
     solver3.integrate(&mut ode3);

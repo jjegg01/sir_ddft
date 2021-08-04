@@ -1,6 +1,6 @@
 [package]
 name = "sir_ddft"
-version = "1.0.1"
+version = "2.0.0-beta"
 authors = ["Julian Jeggle <j_jegg01@uni-muenster.de>", "Raphael Wittkowski <raphael.wittkowski@uni-muenster.de>"]
 edition = "2018"
 license = "AGPL-3.0"
