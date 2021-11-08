@@ -152,7 +152,7 @@ pub(crate) fn convolve_2d_parallel(data: &mut[Complex64], kernel_fft: &[Complex6
 }
 
 /// Calculate the two preceding and the two following indices to a given index `i`
-/// in a vector of `n` elements (wrapping around for )
+/// in a vector of `n` elements (wrapping around for indices outside the bounds)
 #[inline(always)]
 pub(crate) fn calc_indices(i: i32, n: i32) -> [usize;4] {
     // This optimization is probably useless (performance impact < systematic noise)
@@ -164,7 +164,7 @@ pub(crate) fn calc_indices(i: i32, n: i32) -> [usize;4] {
             let offsets = _mm_set_epi32(n-2,n-1,1,2);
             // Do raw offsets
             indices = _mm_add_epi32(indices,offsets);
-            // Wrapping (if index > n-1 then subtract n from index)
+            // Wrap around (if index > n-1 then subtract n from index)
             let mut tmp = _mm_set1_epi32(n-1);
             let mask = _mm_cmpgt_epi32(indices,tmp);
             tmp = _mm_set1_epi32(n);

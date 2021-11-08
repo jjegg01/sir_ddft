@@ -206,15 +206,19 @@ impl<S> ODEIVP<S> for SIRDDFT2DIVP {
         // Else multi-threaded
         else {
             thread_pool.scoped(|s|{
+                // Size of chunk in numbers of rows
                 let chunk_size_y = ceil_div(ny, num_threads as usize);
-                let chunk_size = chunk_size_y * ny;
+                // Size of chunk in numbers of gridpoints
+                let chunk_size = chunk_size_y * nx;
+                // Split output slice into chunks
                 let dS_chunks = dS.chunks_mut(chunk_size);
                 let dI_chunks = dI.chunks_mut(chunk_size);
                 let dR_chunks = dR.chunks_mut(chunk_size);
-                for (i,dS,dI,dR) in izip![0..chunk_size_y,dS_chunks,dI_chunks,dR_chunks] {
+                // One thread per chunk will calculate all RHS values in said chunk
+                for (i,dS,dI,dR) in izip![0..num_threads as usize, dS_chunks, dI_chunks, dR_chunks] {
                     s.execute(move || {
                         for iy in (i*chunk_size_y)..((i+1)*chunk_size_y).min(ny) {
-                            add_contrib(iy, i*chunk_size,dS,dI,dR);
+                            add_contrib(iy, i*chunk_size, dS, dI, dR);
                         }
                     });
                 }
