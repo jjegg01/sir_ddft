@@ -55,7 +55,7 @@ fn export_result<'py>(time: f64, state: &sir_ddft::SIRStateSpatial2DBorrowed,
 /* === SIR with diffusion === */
 
 #[pyclass]
-#[text_signature = "(sir_parameters, diffusion_parameters, state_2d)"]
+#[pyo3(text_signature = "(sir_parameters, diffusion_parameters, state_2d)")]
 /// Solver for the 2D SIR model with diffusion
 pub struct SIRDiffusion2DSolver {
     solver: RKF45Solver<SIRDiffusion2DIVP>,
@@ -74,19 +74,19 @@ impl SIRDiffusion2DSolver {
         }
     }
 
-    #[text_signature = "(time)"]
+    #[pyo3(text_signature = "(time)")]
     /// Add time to the total integration time
     pub fn add_time(&mut self, time: f64) {
         self.ivp.add_time(time);
     }    
     
-    #[text_signature = "()"]
+    #[pyo3(text_signature = "()")]
     /// Integrate to the current integration time
     pub fn integrate(&mut self) {
         self.solver.integrate(&mut self.ivp);
     }
 
-    #[text_signature = "()"]
+    #[pyo3(text_signature = "()")]
     /// Get result of integration
     pub fn get_result<'py>(&self, py: Python<'py>) -> PyResult<&'py PyDict> {
         let (time, state) = self.ivp.get_result();
@@ -99,7 +99,7 @@ impl SIRDiffusion2DSolver {
 /* === SIR-DDFT === */
 
 #[pyclass]
-#[text_signature = "(sir_parameters, diffusion_parameters, ddft_parameters, state_2d, num_threads)"]
+#[pyo3(text_signature = "(sir_parameters, diffusion_parameters, ddft_parameters, state_2d, num_threads)")]
 /// Solver for the 2D SIR DDFT model
 pub struct SIRDDFT2DSolver {
     solver: RKF45Solver<SIRDDFT2DIVP>,
@@ -119,19 +119,19 @@ impl SIRDDFT2DSolver {
         }
     }
 
-    #[text_signature = "(time)"]
+    #[pyo3(text_signature = "(time)")]
     /// Add time to the total integration time
     pub fn add_time(&mut self, time: f64) {
         self.ivp.add_time(time);
     }    
     
-    #[text_signature = "()"]
+    #[pyo3(text_signature = "()")]
     /// Integrate to the current integration time
     pub fn integrate(&mut self) {
         self.solver.integrate(&mut self.ivp);
     }
 
-    #[text_signature = "()"]
+    #[pyo3(text_signature = "()")]
     /// Get result of integration
     pub fn get_result<'py>(&self, py: Python<'py>) -> PyResult<&'py PyDict> {
         let (time, state) = self.ivp.get_result();

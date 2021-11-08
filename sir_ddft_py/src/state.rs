@@ -96,7 +96,7 @@ pub struct Grid1D {
 impl Grid1D {
     #[classmethod]
     /// Create an equidistant grid of n points in 1D ranging from xlo to xhi (inclusive)
-    #[text_signature = "(xlo, xhi, n)"]
+    #[pyo3(text_signature = "(xlo, xhi, n)")]
     pub fn new_equidistant(_: &PyType, xlo: f64, xhi: f64, n: usize) -> PyResult<Self> {
         Ok(Self {
             grid: sir_ddft::Grid1D::new_equidistant((xlo, xhi), n)
@@ -108,7 +108,7 @@ impl Grid1D {
 /// State vector for spatial SIR models in 1D
 ///
 /// To create the initial state, a Grid1D as well as an initializer function initfunc are required. The initializer function takes the grid position x as its sole argument and must return an array of three floats (!) representing the value of the S, I and R fields at this point respectively
-#[text_signature = "(grid, initfunc)"]
+#[pyo3(text_signature = "(grid, initfunc)")]
 pub struct SIRStateSpatial1D {
     pub (crate) state: sir_ddft::SIRStateSpatial1D
 }
@@ -173,7 +173,7 @@ pub struct Grid2D {
 impl Grid2D {
     #[classmethod]
     /// Create an equidistant grid of nx and ny points in 2D ranging from xlo to xhi (inclusive) and ylo to yhi (inclusive) in x and y respectively 
-    #[text_signature = "(xlo, xhi, ylo, yhi, nx, ny)"]
+    #[pyo3(text_signature = "(xlo, xhi, ylo, yhi, nx, ny)")]
     pub fn new_equidistant(_: &PyType, xlo: f64, xhi: f64, ylo: f64, yhi: f64, nx: usize, ny: usize) -> PyResult<Self> {
         Ok(Self {
             grid: sir_ddft::Grid2D::new_cartesian(
@@ -187,7 +187,7 @@ impl Grid2D {
 /// State vector for spatial SIR models in 2D
 ///
 /// To create the initial state, a Grid2D as well as an initializer function initfunc are required. The initializer function takes the grid position x and y as its arguments and must return an array of three floats (!) representing the value of the S, I and R fields at this point respectively
-#[text_signature = "(grid, initfunc)"]
+#[pyo3(text_signature = "(grid, initfunc)")]
 pub struct SIRStateSpatial2D {
     pub (crate) state: sir_ddft::SIRStateSpatial2D
 }
@@ -204,8 +204,10 @@ impl SIRStateSpatial2D {
             state: sir_ddft::SIRStateSpatial2D::new(grid.grid.clone(), |x,y| {
                 let ret = initfunc.call1((x,y)).expect("Error calling initfunc in grid");
                 let extract = |idx| {
-                    ret.get_item(idx).expect("Missing value in initfunc return")
-                    .downcast::<PyFloat>().expect("Invalid value in initfunc return").value() as f64
+                    ret.get_item(idx)
+                        .expect("Missing value in initfunc return")
+                        .downcast::<PyFloat>()
+                        .expect("Invalid value in initfunc return").value() as f64
                 };
                 let S = extract(0);
                 let I = extract(1);

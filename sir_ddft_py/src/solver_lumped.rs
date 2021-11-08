@@ -26,7 +26,7 @@ use sir_ddft::{
 
 #[pyclass]
 /// Solver for the SIR model
-#[text_signature = "(params, state)"]
+#[pyo3(text_signature = "(params, state)")]
 pub struct SIRSolver {
     solver: RKF45Solver<SIRODEIVP>,
     ivp: sir_ddft::SIRODEIVP
@@ -42,19 +42,19 @@ impl SIRSolver {
         }
     }
 
-    #[text_signature = "(time)"]
+    #[pyo3(text_signature = "(time)")]
     /// Add time to the total integration time
     pub fn add_time(&mut self, time: f64) {
         self.ivp.add_time(time);
     }    
     
-    #[text_signature = "()"]
+    #[pyo3(text_signature = "()")]
     /// Integrate to the current integration time
     pub fn integrate(&mut self) {
         self.solver.integrate(&mut self.ivp);
     }
 
-    #[text_signature = "()"]
+    #[pyo3(text_signature = "()")]
     /// Get result of integration
     pub fn get_result<'py>(&self, py: Python<'py>) -> PyResult<&'py PyDict> {
         let (time, state) = self.ivp.get_result();

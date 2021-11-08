@@ -15,9 +15,9 @@ name = "sir_ddft"
 crate-type = ["cdylib"]
 
 [dependencies.pyo3]
-version = "^0.13"
+version = "^0.14"
 features = ["extension-module"]
 
 [dependencies]
 sir_ddft = { path = "../sir_ddft", version = "2.0.0-beta" }
-numpy = "^0.13"
+numpy = "^0.14"

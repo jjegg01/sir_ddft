@@ -17,7 +17,7 @@
 use pyo3::prelude::*;
 
 #[pyclass]
-#[text_signature = "(infection_parameter, recovery_rate)"]
+#[pyo3(text_signature = "(infection_parameter, recovery_rate)")]
 /// Parameters of all SIR models
 pub struct SIRParameters {
     pub(crate) params: sir_ddft::SIRParameters
@@ -56,7 +56,7 @@ impl SIRParameters {
 }
 
 #[pyclass]
-#[text_signature = "(diffusivity_S, diffusivity_I, diffusivity_R)"]
+#[pyo3(text_signature = "(diffusivity_S, diffusivity_I, diffusivity_R)")]
 /// Parameters of all SIR models with diffusion
 pub struct SIRDiffusionParameters {
     pub(crate) diff_params: sir_ddft::SIRDiffusionParameters
@@ -114,8 +114,8 @@ impl SIRDiffusionParameters {
 }
 
 #[pyclass]
-#[text_signature = "(mobility_S, mobility_I, mobility_R, social_distancing_amplitude, \
-social_distancing_range, self_isolation_amplitude, self_isolation_range)"]
+#[pyo3(text_signature = "(mobility_S, mobility_I, mobility_R, social_distancing_amplitude, \
+social_distancing_range, self_isolation_amplitude, self_isolation_range)")]
 /// Parameters of the SIR DDFT model
 pub struct SIRDDFTParameters {
     pub(crate) ddft_params: sir_ddft::SIRDDFTParameters
