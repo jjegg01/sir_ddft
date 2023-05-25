@@ -81,7 +81,7 @@ pub fn main() {
             root.fill(&WHITE).unwrap();
             // Build chart
             let mut chart = ChartBuilder::on(&root)
-                .caption("SIR model with diffusion - number of infected", ("sans-serif",16))
+                .caption("SIR-DDFT model - number of infected", ("sans-serif",16))
                 .set_label_area_size(LabelAreaPosition::Left, 40)
                 .set_label_area_size(LabelAreaPosition::Bottom, 40)
                 .build_ranged(

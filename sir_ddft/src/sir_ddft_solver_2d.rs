@@ -14,8 +14,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-//! Solver for the SIR model with diffusion (simple extension of SIR
-//! model with spatial resolution) under periodic boundary conditions
+//! Solver for the SIR-DDFT model under periodic boundary conditions in
+//! two spatial dimensions
 
 use std::sync::Arc;
 

@@ -93,7 +93,7 @@ pub fn main() {
             let time = times[state_to_draw];
             // Build chart
             let mut chart = ChartBuilder::on(&root)
-                .caption(format!("SIR DDFT model - number of infected at t = {:.2}", time),
+                .caption(format!("SIR-DDFT model - number of infected at t = {:.2}", time),
                     ("sans-serif",16))
                 .set_label_area_size(LabelAreaPosition::Left, 40)
                 .set_label_area_size(LabelAreaPosition::Bottom, 40)
