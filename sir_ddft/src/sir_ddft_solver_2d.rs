@@ -150,7 +150,7 @@ impl<S> ODEIVP<S> for SIRDDFT2DIVP {
         // Calculate RHS fields
         macro_rules! idx2 {
             ($ix: expr, $iy: expr) => {
-                ($ix) + ($iy)*nx;
+                ($ix) + ($iy)*nx
             }
         }
         
