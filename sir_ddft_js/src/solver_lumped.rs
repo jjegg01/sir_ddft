@@ -25,15 +25,10 @@ use crate::*;
 
 fn result2js(time: f64, state: &sir_ddft::SIRState) -> JsValue {
     let result = js_sys::Object::new();
-    // This is not actually unsafe, but rust-analyzer cannot detect that (yet)
-    // TODO: Remove unsafe once rust-analyzer is fixed
-    #[allow(unused_unsafe)] 
-    unsafe {
-        js_sys::Reflect::set(&result, &"time".into(), &time.into()).unwrap();
-        js_sys::Reflect::set(&result, &"S".into(), &state.S.into()).unwrap();
-        js_sys::Reflect::set(&result, &"I".into(), &state.I.into()).unwrap();
-        js_sys::Reflect::set(&result, &"R".into(), &state.R.into()).unwrap();
-    }
+    js_sys::Reflect::set(&result, &"time".into(), &time.into()).unwrap();
+    js_sys::Reflect::set(&result, &"S".into(), &state.S.into()).unwrap();
+    js_sys::Reflect::set(&result, &"I".into(), &state.I.into()).unwrap();
+    js_sys::Reflect::set(&result, &"R".into(), &state.R.into()).unwrap();
     result.into()
 }
 

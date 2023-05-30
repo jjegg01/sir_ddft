@@ -25,15 +25,10 @@ use crate::*;
 
 fn result2js(time: f64, state: SIRStateSpatial2DBorrowed, nx: usize) -> JsValue {
     let result = js_sys::Object::new();
-    // This is not actually unsafe, but rust-analyzer cannot detect that (yet)
-    // TODO: Remove unsafe once rust-analyzer is fixed
-    #[allow(unused_unsafe)] 
-    unsafe {
-        js_sys::Reflect::set(&result, &"time".into(), &time.into()).unwrap();
-        js_sys::Reflect::set(&result, &"S".into(), &reshape_state_vec(nx, state.S)).unwrap();
-        js_sys::Reflect::set(&result, &"I".into(), &reshape_state_vec(nx, state.I)).unwrap();
-        js_sys::Reflect::set(&result, &"R".into(), &reshape_state_vec(nx, state.R)).unwrap();
-    }
+    js_sys::Reflect::set(&result, &"time".into(), &time.into()).unwrap();
+    js_sys::Reflect::set(&result, &"S".into(), &reshape_state_vec(nx, state.S)).unwrap();
+    js_sys::Reflect::set(&result, &"I".into(), &reshape_state_vec(nx, state.I)).unwrap();
+    js_sys::Reflect::set(&result, &"R".into(), &reshape_state_vec(nx, state.R)).unwrap();
     result.into()
 }
 
