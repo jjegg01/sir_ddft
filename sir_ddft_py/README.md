@@ -5,18 +5,26 @@ This crate contains Python bindings to the SIR DDFT library.
 
 Requirements
 ------------
-- Rust >= 1.41 (e.g. via https://rustup.rs/)
-- Python >= 3.6
+- Rust >= 1.48 (e.g. via https://rustup.rs/)
+- Python >= 3.7
 - `numpy` >= 1.16.0 (e.g. via pip)
+- Optional, but strongly recommended: `maturin` (e.g. via pip)
 
-Build instructions
-------------------
-First, build the native library with `cargo`:
-```bash
-cargo build --release
+Build instructions for building from source
+-------------------------------------------
+- Create a clean virtualenv and activate it
+```shell
+python3 -m venv sir_ddft_env
+. sir_ddft_env/bin/activate
 ```
-
-Then (depending on your platform) rename and copy the build artifact from `target/release/` to the desired location (e.g. your `PYTHONPATH` or just the same directory as your script using `sir_ddft`):
-- Linux: Rename `libsir_ddft.so` to `sir_ddft.so`
-- Windows: Rename `libsir_ddft.dll` to `sir_ddft.pyd`
-- macOS: Rename `libsir_ddft.dylib` to `sir_ddft.so`
+- Install dependencies
+```shell
+pip install numpy maturin
+```
+- Install into current virtualenv via Maturin
+```shell
+cd sir_ddft_py
+maturin develop --release
+```
+- You can now import `sir_ddft` from any Python Skript running inside your virtualenv
+(see the `examples` directory for some basic usage examples)
