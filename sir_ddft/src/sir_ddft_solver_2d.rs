@@ -80,7 +80,7 @@ pub struct SIRDDFT2DIVP {
     thread_pool: scoped_threadpool::Pool
 }
 
-impl<S> ODEIVP<S> for SIRDDFT2DIVP {
+impl<S> ODEIVP<S,f64> for SIRDDFT2DIVP {
     #[allow(non_snake_case)]
     fn rhs(&mut self, _ : f64, y: &[f64], rhs: &mut[f64]) {
         // Number of gridpoints

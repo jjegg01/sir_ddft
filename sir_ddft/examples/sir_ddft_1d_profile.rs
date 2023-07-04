@@ -2,7 +2,7 @@
 
 use std::f64::consts::PI;
 
-use sir_ddft::ode::{RKF45Solver, ExplicitODESolver};
+use sir_ddft::ode::{RKF45Solver,ExplicitODESolver};
 use sir_ddft::{SIRParameters, SIRDiffusionParameters, SIRDDFTParameters,
      Grid1D, SIRStateSpatial1D, SIRDDFT1DIVP};
 
@@ -21,7 +21,7 @@ pub fn main() {
     } );
     // Create the IVP and solver
     let mut ivp = SIRDDFT1DIVP::new(sir_params, diff_params, ddft_params, state, NUM_THREADS);
-    let mut solver = RKF45Solver::<SIRDDFT1DIVP>::new();
+    let mut solver = RKF45Solver::<SIRDDFT1DIVP,_>::new();
     // Run solver and collect data for plotting
     let (t,state) = ivp.get_result();
     let mut state_matrix = vec![state.I.to_vec()];

@@ -19,7 +19,7 @@ use pyo3::types::{PyDict};
 
 use crate::*;
 
-use sir_ddft::{
+use ::sir_ddft::{
     ode::{RKF45Solver, ExplicitODESolver}, 
     SIRODEIVP
 };
@@ -28,8 +28,8 @@ use sir_ddft::{
 /// Solver for the SIR model
 #[pyo3(text_signature = "(params, state)")]
 pub struct SIRSolver {
-    solver: RKF45Solver<SIRODEIVP>,
-    ivp: sir_ddft::SIRODEIVP
+    solver: RKF45Solver<SIRODEIVP,f64>,
+    ivp: ::sir_ddft::SIRODEIVP
 }
 
 #[pymethods]
@@ -37,7 +37,7 @@ impl SIRSolver {
     #[new]
     pub fn new(params: &SIRParameters, state: &SIRState) -> Self {
         SIRSolver {
-            solver: RKF45Solver::<SIRODEIVP>::new(),
+            solver: RKF45Solver::<SIRODEIVP,_>::new(),
             ivp: SIRODEIVP::new(params.params.clone(), state.state)
         }
     }

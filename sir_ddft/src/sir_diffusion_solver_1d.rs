@@ -47,7 +47,7 @@ pub struct SIRDiffusion1DIVP {
     duration: f64
 }
 
-impl<S> ODEIVP<S> for SIRDiffusion1DIVP {
+impl<S> ODEIVP<S,f64> for SIRDiffusion1DIVP {
     #[allow(non_snake_case)]
     fn rhs(&mut self, _ : f64, y: &[f64], rhs: &mut[f64]) {
         // Number of gridpoints

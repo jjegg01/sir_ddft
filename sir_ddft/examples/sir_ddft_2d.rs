@@ -42,7 +42,7 @@ pub fn main() {
     });
     // Create the IVP and solver
     let mut ivp = SIRDDFT2DIVP::new(sir_params, diff_params, ddft_params, state, NUM_THREADS);
-    let mut solver = RKF45Solver::<SIRDDFT2DIVP>::new();
+    let mut solver = RKF45Solver::<SIRDDFT2DIVP,_>::new();
     // Run solver and collect data for plotting
     let (t,state) = ivp.get_result();
     let mut states = vec![state.I.to_vec()];

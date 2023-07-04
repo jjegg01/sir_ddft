@@ -20,12 +20,12 @@ use numpy::{ToPyArray};
 
 use crate::*;
 
-use sir_ddft::{
+use ::sir_ddft::{
     ode::{RKF45Solver, ExplicitODESolver}, 
     SIRDiffusion1DIVP, SIRDDFT1DIVP
 };
 
-fn export_result<'py>(time: f64, state: &sir_ddft::SIRStateSpatial1DBorrowed, 
+fn export_result<'py>(time: f64, state: &::sir_ddft::SIRStateSpatial1DBorrowed, 
     py: Python<'py>) -> PyResult<&'py PyDict> 
 {
     let result = PyDict::new(py);
@@ -42,7 +42,7 @@ fn export_result<'py>(time: f64, state: &sir_ddft::SIRStateSpatial1DBorrowed,
 #[pyo3(text_signature = "(sir_parameters, diffusion_parameters, state_1d)")]
 /// Solver for the 1D SIR model with diffusion
 pub struct SIRDiffusion1DSolver {
-    solver: RKF45Solver<SIRDiffusion1DIVP>,
+    solver: RKF45Solver<SIRDiffusion1DIVP,f64>,
     ivp: SIRDiffusion1DIVP
 }
 
@@ -53,7 +53,7 @@ impl SIRDiffusion1DSolver {
         state: &SIRStateSpatial1D) 
     -> Self {
         SIRDiffusion1DSolver {
-            solver: RKF45Solver::<SIRDiffusion1DIVP>::new(),
+            solver: RKF45Solver::<SIRDiffusion1DIVP,_>::new(),
             ivp: SIRDiffusion1DIVP::new(params.params.clone(),
                 diff_params.diff_params.clone(), state.state.clone())
         }
@@ -85,7 +85,7 @@ impl SIRDiffusion1DSolver {
 /// Solver for the 1D SIR DDFT model
 #[pyo3(text_signature = "(sir_parameters, diffusion_parameters, ddft_parameters, state_1d, num_threads)")]
 pub struct SIRDDFT1DSolver {
-    solver: RKF45Solver<SIRDDFT1DIVP>,
+    solver: RKF45Solver<SIRDDFT1DIVP,f64>,
     ivp: SIRDDFT1DIVP
 }
 
@@ -96,7 +96,7 @@ impl SIRDDFT1DSolver {
         ddft_params: &SIRDDFTParameters, state: &SIRStateSpatial1D, num_threads: usize) 
     -> Self {
         SIRDDFT1DSolver {
-            solver: RKF45Solver::<SIRDDFT1DIVP>::new(),
+            solver: RKF45Solver::<SIRDDFT1DIVP,_>::new(),
             ivp: SIRDDFT1DIVP::new(params.params.clone(), diff_params.diff_params.clone(), 
                 ddft_params.ddft_params.clone(), state.state.clone(), num_threads)
         }

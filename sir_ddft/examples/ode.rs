@@ -13,7 +13,7 @@ struct TestODE3 {
 }
 
 // Simple test ODE for arctan(t)
-impl<S> ODEIVP<S> for TestODE {
+impl<S> ODEIVP<S,f64> for TestODE {
     fn rhs(&mut self, t : f64, _: &[f64], rhs: &mut [f64]) {
         rhs[0] = 1./(1. + t*t);
     }
@@ -29,7 +29,7 @@ impl<S> ODEIVP<S> for TestODE {
 }
 
 // Simple test ODE for harmonic oscillator
-impl<S> ODEIVP<S> for TestODE2 {
+impl<S> ODEIVP<S, f64> for TestODE2 {
     fn rhs(&mut self, _ : f64, y: &[f64], rhs: &mut [f64]) {
         rhs[0] = y[1];
         rhs[1] = -y[0];
@@ -46,7 +46,7 @@ impl<S> ODEIVP<S> for TestODE2 {
 }
 
 // Simple exponential growth ode
-impl<S> ODEIVP<S> for TestODE3 {
+impl<S> ODEIVP<S, f64> for TestODE3 {
     fn rhs(&mut self, _ : f64, y: &[f64], rhs: &mut [f64]) {
         rhs[0] = y[0];
     }

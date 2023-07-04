@@ -39,7 +39,7 @@ fn result2js(time: f64, state: SIRStateSpatial1DBorrowed) -> JsValue {
 
 #[wasm_bindgen]
 pub struct SIRDiffusion1DSolver {
-    solver: RKF45Solver<SIRDiffusion1DIVP>,
+    solver: RKF45Solver<SIRDiffusion1DIVP,f64>,
     ivp: SIRDiffusion1DIVP
 }
 
@@ -50,7 +50,7 @@ impl SIRDiffusion1DSolver {
         state: SIRStateSpatial1D) 
     -> Self {
         SIRDiffusion1DSolver {
-            solver: RKF45Solver::<SIRDiffusion1DIVP>::new(),
+            solver: RKF45Solver::<SIRDiffusion1DIVP,f64>::new(),
             ivp: SIRDiffusion1DIVP::new(params.params, diff_params.diff_params, state.state)
         }
     }
@@ -73,7 +73,7 @@ impl SIRDiffusion1DSolver {
 
 #[wasm_bindgen]
 pub struct SIRDDFT1DSolver {
-    solver: RKF45Solver<SIRDDFT1DIVP>,
+    solver: RKF45Solver<SIRDDFT1DIVP,f64>,
     ivp: SIRDDFT1DIVP
 }
 
@@ -84,7 +84,7 @@ impl SIRDDFT1DSolver {
         ddft_params: SIRDDFTParameters, state: SIRStateSpatial1D) 
     -> Self {
         SIRDDFT1DSolver {
-            solver: RKF45Solver::<SIRDDFT1DIVP>::new(),
+            solver: RKF45Solver::<SIRDDFT1DIVP,f64>::new(),
             ivp: SIRDDFT1DIVP::new(params.params, diff_params.diff_params, 
                 ddft_params.ddft_params, state.state, 1)
         }

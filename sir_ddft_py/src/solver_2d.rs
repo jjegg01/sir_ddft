@@ -58,7 +58,7 @@ fn export_result<'py>(time: f64, state: &sir_ddft::SIRStateSpatial2DBorrowed,
 #[pyo3(text_signature = "(sir_parameters, diffusion_parameters, state_2d)")]
 /// Solver for the 2D SIR model with diffusion
 pub struct SIRDiffusion2DSolver {
-    solver: RKF45Solver<SIRDiffusion2DIVP>,
+    solver: RKF45Solver<SIRDiffusion2DIVP,f64>,
     ivp: SIRDiffusion2DIVP
 }
 
@@ -68,7 +68,7 @@ impl SIRDiffusion2DSolver {
     pub fn new(params: &SIRParameters, diff_params: &SIRDiffusionParameters, state: &SIRStateSpatial2D) 
     -> Self {
         Self {
-            solver: RKF45Solver::<SIRDiffusion2DIVP>::new(),
+            solver: RKF45Solver::<SIRDiffusion2DIVP,_>::new(),
             ivp: SIRDiffusion2DIVP::new(params.params.clone(), diff_params.diff_params.clone(),
             state.state.clone())
         }
@@ -102,7 +102,7 @@ impl SIRDiffusion2DSolver {
 #[pyo3(text_signature = "(sir_parameters, diffusion_parameters, ddft_parameters, state_2d, num_threads)")]
 /// Solver for the 2D SIR DDFT model
 pub struct SIRDDFT2DSolver {
-    solver: RKF45Solver<SIRDDFT2DIVP>,
+    solver: RKF45Solver<SIRDDFT2DIVP,f64>,
     ivp: SIRDDFT2DIVP
 }
 
@@ -113,7 +113,7 @@ impl SIRDDFT2DSolver {
         ddft_params: &SIRDDFTParameters, state: &SIRStateSpatial2D, num_threads: usize) 
     -> Self {
         SIRDDFT2DSolver {
-            solver: RKF45Solver::<SIRDDFT2DIVP>::new(),
+            solver: RKF45Solver::<SIRDDFT2DIVP,_>::new(),
             ivp: SIRDDFT2DIVP::new(params.params.clone(), diff_params.diff_params.clone(), 
                 ddft_params.ddft_params.clone(), state.state.clone(), num_threads)
         }

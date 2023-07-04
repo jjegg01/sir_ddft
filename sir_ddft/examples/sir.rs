@@ -17,7 +17,7 @@ pub fn main() {
     let state = SIRState::new(0.998, 0.002, 0.);
     // Create the IVP and solver
     let mut ivp = SIRODEIVP::new(params, state);
-    let mut solver = RKF45Solver::<SIRODEIVP>::new();
+    let mut solver = RKF45Solver::<SIRODEIVP,_>::new();
     // Run solver and collect data for plotting
     let (t,state) = ivp.get_result();
     let mut result = vec![(t, *state)];

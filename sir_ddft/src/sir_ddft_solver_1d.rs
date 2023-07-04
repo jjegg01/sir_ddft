@@ -134,7 +134,7 @@ fn convolve_sirddft(S: &[f64], I: &[f64], R: &[f64], kernel_sd: &[f64], kernel_s
     // (conv_sd_SR * amp_sd + conv_si_I * amp_si, conv_si_SIR * amp_si)
 }
 
-impl<S> ODEIVP<S> for SIRDDFT1DIVP {
+impl<S> ODEIVP<S,f64> for SIRDDFT1DIVP {
     #[allow(non_snake_case)]
     fn rhs(&mut self, _ : f64, y: &[f64], rhs: &mut[f64]) {
         // Number of gridpoints

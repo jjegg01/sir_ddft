@@ -34,7 +34,7 @@ fn result2js(time: f64, state: &sir_ddft::SIRState) -> JsValue {
 
 #[wasm_bindgen]
 pub struct SIRSolver {
-    solver: RKF45Solver<SIRODEIVP>,
+    solver: RKF45Solver<SIRODEIVP,f64>,
     ivp: sir_ddft::SIRODEIVP
 }
 
@@ -43,7 +43,7 @@ impl SIRSolver {
     #[wasm_bindgen(constructor)]
     pub fn new(params: SIRParameters, state: SIRState) -> Self {
         SIRSolver {
-            solver: RKF45Solver::<SIRODEIVP>::new(),
+            solver: RKF45Solver::<SIRODEIVP,f64>::new(),
             ivp: SIRODEIVP::new(params.params, state.state)
         }
     }

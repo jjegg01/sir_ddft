@@ -31,7 +31,7 @@ pub struct SIRODEIVP {
     duration: f64
 }
 
-impl<S> ODEIVP<S> for SIRODEIVP {
+impl<S> ODEIVP<S,f64> for SIRODEIVP {
     #[inline(always)]
     fn rhs(&mut self, _ : f64, y: &[f64], rhs: &mut[f64]) {
         let c = self.param.infection_parameter;

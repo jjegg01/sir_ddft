@@ -14,53 +14,56 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-use std::marker;
+use std::{marker, ops::Mul};
+use num_complex::ComplexFloat;
+use num_traits::{Zero, Float, NumCast};
+
 use super::{ExplicitODESolver, ODEIVP, StopCondition};
 
 /// Classic Runge-Kutta-Fehlberg integrator with order 4,(5)
-pub struct RKF45Solver<P: ODEIVP<Self>> {
+pub struct RKF45Solver<P: ODEIVP<Self, T>, T: ComplexFloat> {
     // Error threshold for step size adaption
-    eps_0 : f64,
+    eps_0 : T::Real,
     // Safety factor for error threshold comparison
-    beta : f64,
+    beta : T::Real,
     // Initial step size
     dt_0 : f64,
     // P is not actually saved as part of the solver, so we use PhantomMarker
     _marker: marker::PhantomData<P>
 }
 
-impl<P: ODEIVP<Self>> RKF45Solver<P> {
+impl<P: ODEIVP<Self,T>, T: ComplexFloat> RKF45Solver<P,T> {
     /// Create a new RKF45 solver
-    pub fn new() -> RKF45Solver<P> {
+    pub fn new() -> RKF45Solver<P,T> {
         RKF45Solver {
             // Sensible default values
-            eps_0: 1e-5,
-            beta: 0.95,
+            eps_0: <T::Real as NumCast>::from(1e-5).unwrap(),
+            beta: <T::Real as NumCast>::from(0.95).unwrap(),
             dt_0: 0.1,
-            _marker: marker::PhantomData
+            _marker: marker::PhantomData,
         }
     }
 
     /// Set error threshold for step size adaption (default: 10^-5)
-    pub fn eps_0(&mut self, eps_0 : f64) -> &mut RKF45Solver<P> {
+    pub fn eps_0(&mut self, eps_0 : T::Real) -> &mut RKF45Solver<P,T> {
         self.eps_0 = eps_0;
         self
     }
 
     /// Set safety factor for error threshold comparison (default: 0.85)
-    pub fn beta(&mut self, beta : f64) -> &mut RKF45Solver<P> {
+    pub fn beta(&mut self, beta : T::Real) -> &mut RKF45Solver<P,T> {
         self.beta = beta;
         self
     }
 
     /// Initial stepsize (default: 0.1)
-    pub fn dt(&mut self, dt : f64) -> &mut RKF45Solver<P> {
+    pub fn dt(&mut self, dt : f64) -> &mut RKF45Solver<P,T> {
         self.dt_0 = dt;
         self
     }
 }
 
-impl<P: ODEIVP<Self>> ExplicitODESolver for RKF45Solver<P> {
+impl<T: ComplexFloat + Mul<f64, Output=T>, P: ODEIVP<Self,T>> ExplicitODESolver<T> for RKF45Solver<P,T> {
     type Problem = P;
 
     fn integrate(&mut self, p : &mut P) {
@@ -82,11 +85,11 @@ impl<P: ODEIVP<Self>> ExplicitODESolver for RKF45Solver<P> {
         let dim = y.len();
         // Allocate vectors for k_i, a temporary state vector tmp_y and the
         // two solutions y1 and y2
-        let mut k: [Vec<f64>; 6] = Default::default();
-        k.iter_mut().for_each(|k_i| k_i.resize(dim, 0.0));
-        let mut tmp_y = vec![0.;dim];
-        let mut y1 = vec![0.;dim];
-        let mut y2 = vec![0.;dim];
+        let mut k: [Vec<T>; 6] = Default::default();
+        k.iter_mut().for_each(|k_i| k_i.resize(dim, T::zero()));
+        let mut tmp_y = vec![T::zero();dim];
+        let mut y1 = vec![T::zero();dim];
+        let mut y2 = vec![T::zero();dim];
         // Loop over all steps
         loop {
             // Get dt for next step or break out of loop if IVP says so
@@ -114,47 +117,48 @@ impl<P: ODEIVP<Self>> ExplicitODESolver for RKF45Solver<P> {
             for i in 0..6 {
                 // Calculate k[i] via the usual RK scheme
                 let tmp_t = t + dt*TABLEAU[i][0];
-                tmp_y.fill(0.0);
+                tmp_y.fill(T::zero());
                 for j in 0..i {
                     tmp_y = tmp_y.into_iter()
                         .zip(k[j].iter())
-                        .map(|(sum,k)| sum + k * TABLEAU[i][j+1])
+                        .map(|(sum,k)| sum + *k * TABLEAU[i][j+1])
                         .collect();
                 }
                 tmp_y = tmp_y.into_iter()
                     .zip(y.iter())
-                    .map(|(sum,y_old)| y_old + sum * dt)
+                    .map(|(sum,y_old)| *y_old + sum * dt)
                     .collect();
                 p.rhs(tmp_t, &tmp_y, k[i].as_mut_slice());
             }
             // Calculate two solutions for (y(t+dt) - y(t)) / h
-            y1.fill(0.0);
-            y2.fill(0.0);
+            y1.fill(T::zero());
+            y2.fill(T::zero());
             for j in 0..dim {
                 for i in 0..6 {
-                    y1[j] += k[i][j] * TABLEAU[6][i+1];
-                    y2[j] += k[i][j] * TABLEAU[7][i+1];
+                    y1[j] = y1[j] + k[i][j] * TABLEAU[6][i+1];
+                    y2[j] = y2[j] + k[i][j] * TABLEAU[7][i+1];
                 }
             }
             // Calculate error
-            let error = dt * y1.iter()
+            let error = y1.iter()
                 .zip(y2.iter())
-                .map(|(y1,y2)| (y1-y2).abs())
-                .fold(0.0, |acc: f64,x| acc.max(x));
+                .map(|(y1,y2)| (*y1-*y2).abs())
+                .fold(T::Real::zero(), |acc: T::Real,x| acc.max(x))
+                * <T::Real as NumCast>::from(dt).unwrap();
             // Compare error to threshold and step forward if below
-            dt = if error <= self.eps_0 
+            dt = <f64 as NumCast>::from(if error <= self.eps_0 
                 {
                     t += dt;
                     y = y.iter()
                         .zip(y2.iter())
-                        .map(|(y,y2)| y + dt * *y2)
+                        .map(|(y,y2)| *y + *y2 * dt)
                         .collect();
                     stop = p.end_step(t, &y, &self);
-                    self.beta * dt * (self.eps_0 / error).powf(1./5.)
+                    self.beta * <T::Real as NumCast>::from(dt).unwrap() * Float::powf(self.eps_0 / error, <T::Real as NumCast>::from(1./5.).unwrap())
                 }
                 else {
-                    self.beta * dt * (self.eps_0 / error).powf(1./4.)
-                }
+                    self.beta * <T::Real as NumCast>::from(dt).unwrap() * Float::powf(self.eps_0 / error, <T::Real as NumCast>::from(1./4.).unwrap())
+                }).unwrap()
         } // end of loop
         p.final_state(t, y);
     }

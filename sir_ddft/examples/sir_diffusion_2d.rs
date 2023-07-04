@@ -28,7 +28,7 @@ pub fn main() {
     ));
     // Create the IVP and solver
     let mut ivp = SIRDiffusion2DIVP::new(sir_params, diff_params, state);
-    let mut solver = RKF45Solver::<SIRDiffusion2DIVP>::new();
+    let mut solver = RKF45Solver::<SIRDiffusion2DIVP,_>::new();
     // Run solver and collect data for plotting
     let (t,state) = ivp.get_result();
     let mut states = vec![state.I.to_vec()];

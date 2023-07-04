@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+use num_complex::ComplexFloat;
+
 /// Stop condition for integration:
 /// * Continue: Continue integration without bound in `t`
 /// * ContinueUntil: Continue, but only until an upper bound for `t` is hit
@@ -31,21 +33,21 @@ pub enum StopCondition {
 /// the solver to the post-step processing. To prevent infinite recursion on
 /// trait bound checking, it is not constrained to ExplicitODESolver. Any
 /// other type is useless in this context anyway.
-pub trait ODEIVP<S> {
+pub trait ODEIVP<S,T: ComplexFloat> {
     /// Returns right hand side (i.e. the value of `f`) of IVP `y'=f(t,y)`
-    fn rhs(&mut self, t : f64, y: &[f64], rhs: &mut[f64]);
+    fn rhs(&mut self, t : f64, y: &[T], rhs: &mut[T]);
     /// Returns initial state `(t_0, y_0)` such that `y(t_0) = y_0`
-    fn initial_state(&mut self) -> (f64, Vec<f64>);
+    fn initial_state(&mut self) -> (f64, Vec<T>);
     /// Called at the end of each integration step (and once for `t_0`)
-    fn end_step(&mut self, t : f64, y: &[f64], solver: &S) -> StopCondition;
+    fn end_step(&mut self, t : f64, y: &[T], solver: &S) -> StopCondition;
     /// Called at the end of integration giving back the state taken in initial_state
-    fn final_state(&mut self, t: f64, y: Vec<f64>);
+    fn final_state(&mut self, t: f64, y: Vec<T>);
 }
 
 /// Trait representing a minimal interface for an explicit solver for ODEs.
-pub trait ExplicitODESolver : Sized {
+pub trait ExplicitODESolver<T: ComplexFloat> : Sized {
     /// IVP to solve
-    type Problem : ODEIVP<Self>;
+    type Problem : ODEIVP<Self,T>;
 
     /// Integrate a given IVP with this integrator
     fn integrate(&mut self, p : &mut Self::Problem);
