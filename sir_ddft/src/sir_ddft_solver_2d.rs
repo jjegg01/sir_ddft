@@ -94,6 +94,7 @@ impl<S> ODEIVP<S,f64> for SIRDDFT2DIVP {
         // Shorthands for parameters
         let inf_param = self.sir_params.infection_parameter;
         let rec_rate = self.sir_params.recovery_rate;
+        let mort_rate = self.sir_params.mortality_rate;
         let diff_S = self.diff_params.diffusivity_S;
         let diff_I = self.diff_params.diffusivity_I;
         let diff_R = self.diff_params.diffusivity_R;
@@ -187,7 +188,7 @@ impl<S> ODEIVP<S,f64> for SIRDDFT2DIVP {
                     - mob_S * ddft_term!(S,conv_sr);
                 dI[curr-offset] = diff_I * laplace_2d9(I, 
                     prev_x, ix, next_x, prev_y, iy, next_y, nx, dx, dy)
-                    + inf_param * S[curr] * I[curr] - rec_rate * I[curr]
+                    + inf_param * S[curr] * I[curr] - rec_rate * I[curr] - mort_rate * I[curr]
                     - mob_I * ddft_term!(I,conv_i);
                 dR[curr-offset] = diff_R * laplace_2d9(R, 
                     prev_x, ix, next_x, prev_y, iy, next_y, nx, dx, dy)

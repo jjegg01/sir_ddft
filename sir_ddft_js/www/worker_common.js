@@ -1,7 +1,7 @@
 function buildSIRParameters(settings) {
     let infectivity = settings.sir_parameters.infectivity;
     let recovery_rate = settings.sir_parameters.recovery_rate;
-    return new SIRParameters(infectivity, recovery_rate);
+    return new SIRParameters(infectivity, recovery_rate, 0.0); // TODO: allow passing of mortality rate
 }
 
 function buildSIRDiffusionParameters(settings) {

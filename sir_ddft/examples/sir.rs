@@ -13,7 +13,7 @@ use sir_ddft::{SIRParameters, SIRState, SIRODEIVP};
 
 pub fn main() {
     // Setup parameters and initial state
-    let params = SIRParameters::new(0.5, 0.1);
+    let params = SIRParameters::new(0.5, 0.1, 0.0);
     let state = SIRState::new(0.998, 0.002, 0.);
     // Create the IVP and solver
     let mut ivp = SIRODEIVP::new(params, state);

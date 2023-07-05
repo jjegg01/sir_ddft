@@ -16,27 +16,27 @@
 
 use pyo3::prelude::*;
 use pyo3::types::PyDict;
-use numpy::{ToPyArray};
+use numpy::ToPyArray;
 
 use crate::*;
 
-use sir_ddft::{
+use ::sir_ddft::{
     ode::{RKF45Solver, ExplicitODESolver}, 
     SIRDiffusion2DIVP, SIRDDFT2DIVP
 };
 
-fn export_result<'py>(time: f64, state: &sir_ddft::SIRStateSpatial2DBorrowed,
+fn export_result<'py>(time: f64, state: &::sir_ddft::SIRStateSpatial2DBorrowed,
     py: Python<'py>) -> PyResult<&'py PyDict> 
 {
     #[allow(unreachable_patterns)]
     let (nx,ny) = match state.grid {
-        sir_ddft::Grid2D::Cartesian(grid) => {(
+        ::sir_ddft::Grid2D::Cartesian(grid) => {(
             match &grid.grid_x {
-                sir_ddft::Grid1D::Equidistant(grid) => grid.n,
+                ::sir_ddft::Grid1D::Equidistant(grid) => grid.n,
                 _ => panic!("Cannot process non-equidistant grids!")
             },
             match &grid.grid_y {
-                sir_ddft::Grid1D::Equidistant(grid) => grid.n,
+                ::sir_ddft::Grid1D::Equidistant(grid) => grid.n,
                 _ => panic!("Cannot process non-equidistant grids!")
             }
         )},

@@ -36,10 +36,11 @@ impl<S> ODEIVP<S,f64> for SIRODEIVP {
     fn rhs(&mut self, _ : f64, y: &[f64], rhs: &mut[f64]) {
         let c = self.param.infection_parameter;
         let w = self.param.recovery_rate;
+        let m = self.param.mortality_rate;
         #[allow(non_snake_case)]
         let (S,I) = (y[0], y[1]);
         rhs[0] = -c*S*I;
-        rhs[1] = c*S*I - w*I;
+        rhs[1] = c*S*I - w*I - m*I;
         rhs[2] = w*I;
     }
 

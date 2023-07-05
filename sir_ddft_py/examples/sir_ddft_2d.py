@@ -10,7 +10,7 @@ from common_2d import run_sim
 
 L=10
 N=512
-params = sir_ddft.SIRParameters(1.0,0.1)
+params = sir_ddft.SIRParameters(1.0,0.1,0.0)
 diff_params = sir_ddft.SIRDiffusionParameters(0.01,0.01,0.01)
 ddft_params = sir_ddft.SIRDDFTParameters(1.0,1.0,1.0,-10,100,-30,100)
 grid = sir_ddft.Grid2D.new_equidistant(0,L,0,L,N,N)

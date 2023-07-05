@@ -26,15 +26,17 @@ pub struct SIRParameters {
     /// (i.e. has the dimension of an inverse time), while in the 1D and 2D models 
     /// this parameter (*c*) has a dimension of length per time (1D) or area per time (2D)
     /// respectively.
-    pub infection_parameter : f64,
-    /// Recovery rate
-    pub recovery_rate : f64
+    pub infection_parameter: f64,
+    /// Recovery rate (i.e. rate at which infected transition to the recovered population)
+    pub recovery_rate: f64,
+    /// Mortality rate (i.e. rate at which infected decrease without a transition to the recovered population)
+    pub mortality_rate: f64
 }
 
 impl SIRParameters {
     /// Create a new set of rate parameters for SIR models
-    pub fn new(infection_parameter: f64, recovery_rate: f64) -> SIRParameters {
-        SIRParameters { infection_parameter, recovery_rate }
+    pub fn new(infection_parameter: f64, recovery_rate: f64, mortality_rate: f64) -> SIRParameters {
+        SIRParameters { infection_parameter, recovery_rate, mortality_rate }
     }
 }
 
@@ -60,7 +62,7 @@ impl SIRDiffusionParameters {
     }
 }
 
-/// Additional parameters for the SIR DDFT model
+/// Additional parameters for the SIR DDFT / PFC model
 #[allow(non_snake_case)]
 #[derive(Clone)]
 pub struct SIRDDFTParameters {

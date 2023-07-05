@@ -10,7 +10,7 @@ use sir_ddft::{SIRParameters, SIRDiffusionParameters, SIRDDFTParameters,
 fn my_benchmark(c: &mut Criterion) {
     const NUM_THREADS: usize = 4;
     // Setup parameters and initial state
-    let sir_params = SIRParameters::new(1.0, 0.1);
+    let sir_params = SIRParameters::new(1.0, 0.1, 0.0);
     let diff_params = SIRDiffusionParameters::new(0.01, 0.01, 0.01);
     let ddft_params = SIRDDFTParameters::new(1.0, 1.0, 1.0, -5.0, 100.0, -10.0, 100.0);
     let grid = Grid2D::new_cartesian(

@@ -12,7 +12,7 @@ DPI = 110
 FONTSIZE = 14
 mpl.rcParams.update({"font.size" : FONTSIZE})
 
-params = sir_ddft.SIRParameters(1.0,0.2)
+params = sir_ddft.SIRParameters(1.0,0.2,0.0)
 state  = sir_ddft.SIRState(0.999,0.001,0.0)
 solver = sir_ddft.SIRSolver(params, state)
 

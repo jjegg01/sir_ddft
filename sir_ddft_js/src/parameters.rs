@@ -27,9 +27,9 @@ pub struct SIRParameters {
 #[wasm_bindgen]
 impl SIRParameters {
     #[wasm_bindgen(constructor)]
-    pub fn new(infection_parameter: f64, recovery_rate: f64) -> Self {
+    pub fn new(infection_parameter: f64, recovery_rate: f64, mortality_rate: f64) -> Self {
         Self {
-            params: sir_ddft::SIRParameters::new(infection_parameter, recovery_rate)
+            params: sir_ddft::SIRParameters::new(infection_parameter, recovery_rate, mortality_rate)
         }
     }
 }

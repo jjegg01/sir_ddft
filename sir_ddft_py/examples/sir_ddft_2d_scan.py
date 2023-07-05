@@ -42,7 +42,7 @@ def sample(C_si, C_rel):
     L = 10
     N = 512 # Powers of 2 are favorable for the internal FFT
     dx = L/N
-    params = sir_ddft.SIRParameters(1.0,0.1)
+    params = sir_ddft.SIRParameters(1.0,0.1,0.0)
     diff_params = sir_ddft.SIRDiffusionParameters(0.01,0.01,0.01)
     ddft_params = sir_ddft.SIRDDFTParameters(1.0,1.0,1.0,C_sd,100,C_si,100)
     x = np.linspace(0, L, N, endpoint=False) + dx/2

@@ -7,7 +7,7 @@ import sir_ddft as sir_ddft
 
 from common_1d import run_sim
 
-params = sir_ddft.SIRParameters(0.5,0.1)
+params = sir_ddft.SIRParameters(0.5,0.1,0.0)
 diff_params = sir_ddft.SIRDiffusionParameters(0.01,0.01,0.01)
 ddft_params = sir_ddft.SIRDDFTParameters(1.0,1.0,1.0,-5,100,-10,100)
 grid = sir_ddft.Grid1D.new_equidistant(0,1,256)

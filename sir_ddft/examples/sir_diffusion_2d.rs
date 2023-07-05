@@ -17,7 +17,7 @@ use inferno_map::{colormap_inferno, f64_rgb_to_u8_rgb};
 
 pub fn main() {
     // Setup parameters and initial state
-    let sir_params = SIRParameters::new(1.0, 0.1);
+    let sir_params = SIRParameters::new(1.0, 0.1, 0.0);
     let diff_params = SIRDiffusionParameters::new(0.01, 0.01, 0.01);
     let grid = Grid2D::new_cartesian(
         Grid1D::new_equidistant((0.,1.), 64),

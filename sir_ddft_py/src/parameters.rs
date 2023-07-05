@@ -17,7 +17,7 @@
 use pyo3::prelude::*;
 
 #[pyclass]
-#[pyo3(text_signature = "(infection_parameter, recovery_rate)")]
+#[pyo3(text_signature = "(infection_parameter, recovery_rate, mortality_rate)")]
 /// Parameters of all SIR models
 pub struct SIRParameters {
     pub(crate) params: sir_ddft::SIRParameters
@@ -26,9 +26,10 @@ pub struct SIRParameters {
 #[pymethods]
 impl SIRParameters {
     #[new]
-    pub fn new(infection_parameter: f64, recovery_rate: f64) -> Self {
+    pub fn new(infection_parameter: f64, recovery_rate: f64, mortality_rate: Option<f64>) -> Self {
+        let mortality_rate = mortality_rate.unwrap_or(0.0);
         Self {
-            params: sir_ddft::SIRParameters::new(infection_parameter, recovery_rate)
+            params: sir_ddft::SIRParameters::new(infection_parameter, recovery_rate, mortality_rate)
         }
     }
 
