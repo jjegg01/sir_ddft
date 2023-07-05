@@ -17,7 +17,9 @@
 //! ODE solvers
 
 mod solver;
+mod euler;
 mod rkf45;
 
 pub use solver::*;
+pub use euler::*;
 pub use rkf45::*;
