@@ -173,4 +173,13 @@ impl<'a> SIRStateSpatial2DBorrowed<'a> {
             S,I,R,grid
         }
     }
+
+    pub fn to_owned(&self) -> SIRStateSpatial2D {
+        SIRStateSpatial2D {
+            S: self.S.to_owned(),
+            I: self.I.to_owned(),
+            R: self.R.to_owned(),
+            grid: self.grid.clone()
+        }
+    }
 }

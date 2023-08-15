@@ -67,7 +67,7 @@ pub(crate) fn laplace_2d9(y: &[f64],
         y[prev_x + nx*prev_y] + y[ix + nx*prev_y]   + y[next_x + nx*prev_y] + 
         y[prev_x + nx*iy]     - 8. * y[ix + nx*iy]  + y[next_x + nx*iy] + 
         y[prev_x + nx*next_y] + y[ix + nx*next_y]   + y[next_x + nx*next_y]
-    ) / (dx * dx)
+    ) / (3. * dx * dx)
 }
 
 // Transpose slice as if it was a row-major 2d matrix

@@ -150,4 +150,13 @@ impl<'a> SIRStateSpatial1DBorrowed<'a> {
             S,I,R,grid
         }
     }
+
+    pub fn to_owned(&self) -> SIRStateSpatial1D {
+        SIRStateSpatial1D {
+            S: self.S.to_owned(),
+            I: self.I.to_owned(),
+            R: self.R.to_owned(),
+            grid: self.grid.clone()
+        }
+    }
 }

@@ -32,7 +32,7 @@ scoped_threadpool = "^0.1.9"
 
 [dev-dependencies]
 criterion = "0.3"
-plotters = { version = "^0.2.15", features = ["cairo"]}
-cairo-rs = "0.8.1"
-gtk = "0.8.1"
-gio = "0.8.1"
+pyo3 = {version = "0.18", features = ["auto-initialize"]}
+numpy = "0.18"
+anyhow = "1.0"
+indicatif = "0.17.5"
