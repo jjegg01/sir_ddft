@@ -43,16 +43,21 @@ fn sir_ddft(_: Python, m: &PyModule) -> PyResult<()> {
     m.add_class::<SIRParameters>()?;
     m.add_class::<SIRDiffusionParameters>()?;
     m.add_class::<SIRDDFTParameters>()?;
+    m.add_class::<SZParameters>()?;
+    m.add_class::<SZDiffusionParameters>()?;
+    m.add_class::<SZDDFTParameters>()?;
     m.add_class::<SIRState>()?;
     m.add_class::<Grid1D>()?;
     m.add_class::<Grid2D>()?;
     m.add_class::<SIRStateSpatial1D>()?;
     m.add_class::<SIRStateSpatial2D>()?;
+    m.add_class::<SZStateSpatial2D>()?;
     m.add_class::<SIRSolver>()?;
     m.add_class::<SIRDiffusion1DSolver>()?;
     m.add_class::<SIRDDFT1DSolver>()?;
     m.add_class::<SIRDiffusion2DSolver>()?;
     m.add_class::<SIRDDFT2DSolver>()?;
+    m.add_class::<SZDDFT2DSolver>()?;
     Ok(())
 }
 

@@ -95,3 +95,73 @@ impl SIRDDFTParameters {
         }
     }
 }
+
+#[derive(Clone)]
+pub struct SZParameters {
+    /// Parameter controlling the probability of a zombie biting a human
+    pub bite_parameter: f64,
+    /// Parameter controlling the probability of a human killing a zombie
+    pub kill_parameter: f64
+}
+
+impl SZParameters {
+    /// Create a new set of diffusion parameters for a spatial SIR model
+    #[allow(non_snake_case)]
+    pub fn new(bite_parameter : f64, kill_parameter: f64) 
+        -> Self
+    {
+        SZParameters { bite_parameter, kill_parameter }
+    }
+}
+
+/// Additional parameters for the SIR model with diffusion
+#[allow(non_snake_case)]
+#[derive(Clone)]
+pub struct SZDiffusionParameters {
+    /// Diffusion constant for S field
+    pub diffusivity_S : f64,
+    /// Diffusion constant for Z field
+    pub diffusivity_Z : f64
+}
+
+impl SZDiffusionParameters {
+    /// Create a new set of diffusion parameters for a spatial SIR model
+    #[allow(non_snake_case)]
+    pub fn new(diffusivity_S : f64, diffusivity_Z: f64) 
+        -> Self
+    {
+        SZDiffusionParameters { diffusivity_S, diffusivity_Z }
+    }
+}
+
+#[allow(non_snake_case)]
+#[derive(Clone)]
+pub struct SZDDFTParameters {
+    /// Mobility parameter for S field
+    pub mobility_S : f64,
+    /// Mobility parameter for I field
+    pub mobility_Z : f64,
+    /// Amplitude of Gaussian interaction kernel for humans fearing zombies
+    pub fear_amplitude: f64,
+    /// Range of Gaussian interaction kernel for humans fearing zombies
+    pub fear_range: f64,
+    /// Amplitude of Gaussian interaction kernel for zombies hungering after humans
+    pub hunger_amplitude: f64,
+    /// Amplitude of Gaussian interaction kernel for zombies hungering after humans
+    pub hunger_range: f64,
+}
+
+impl SZDDFTParameters {
+    #[allow(non_snake_case)]
+    pub fn new(mobility_S: f64, mobility_Z: f64,
+        fear_amplitude: f64, fear_range: f64,
+        hunger_amplitude: f64, hunger_range: f64
+    ) -> Self {
+        Self {
+            mobility_S, mobility_Z,
+            fear_amplitude, fear_range,
+            hunger_amplitude, hunger_range
+        }
+    }
+}
+

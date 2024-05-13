@@ -11,8 +11,8 @@ mod common;
 pub fn main() -> ExitCode {
     // Simulation length / resolution parameters
     const DT: f64 = 0.1;
-    const STEPS: u64 = 400;
-    const GRIDPOINTS: usize = 256;
+    const STEPS: u64 = 300;
+    const GRIDPOINTS: usize = 512;
     const DOMAINSIZE: f64 = 10.0;
     const DX: f64 = DOMAINSIZE / GRIDPOINTS as f64;
     // Setup initial state
@@ -55,7 +55,7 @@ pub fn main() -> ExitCode {
 
     // -- Graphical output --
 
-    if let Err(e) = common::plot(result.as_slice(), Some((0.,DOMAINSIZE)), "SIR model with diffusion in 2D", "sir_diffusion_2d.npz") {
+    if let Err(e) = common::plot(result.as_slice(), Some((0.,DOMAINSIZE)), "SIR model with diffusion in 2D", "sir_diffusion_2d") {
         println!("Error: {}", e);
         ExitCode::FAILURE
     }

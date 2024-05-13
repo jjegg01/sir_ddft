@@ -50,7 +50,7 @@ pub fn main() -> ExitCode {
 
     // -- Graphical output --
 
-    if let Err(e) = common::plot(result.as_slice(), Some((0.,DOMAINSIZE)), "SIR model with diffusion in 1D", "sir_diffusion_1d.npz") {
+    if let Err(e) = common::plot(result.as_slice(), Some((0.,DOMAINSIZE)), "SIR model with diffusion in 1D", "sir_diffusion_1d") {
         println!("Error: {}", e);
         ExitCode::FAILURE
     }

@@ -22,14 +22,12 @@ use crate::*;
 
 use ::sir_ddft::{
     ode::{RKF45Solver, ExplicitODESolver}, 
-    SIRDiffusion2DIVP, SIRDDFT2DIVP
+    SIRDiffusion2DIVP, SIRDDFT2DIVP, SIRStateSpatial2DBorrowed, SZDDFT2DIVP, SZStateSpatial2DBorrowed
 };
 
-fn export_result<'py>(time: f64, state: &::sir_ddft::SIRStateSpatial2DBorrowed,
-    py: Python<'py>) -> PyResult<&'py PyDict> 
-{
+fn get_grid_dims(grid: &::sir_ddft::Grid2D) -> (usize, usize) {
     #[allow(unreachable_patterns)]
-    let (nx,ny) = match state.grid {
+    match grid {
         ::sir_ddft::Grid2D::Cartesian(grid) => {(
             match &grid.grid_x {
                 ::sir_ddft::Grid1D::Equidistant(grid) => grid.n,
@@ -41,15 +39,35 @@ fn export_result<'py>(time: f64, state: &::sir_ddft::SIRStateSpatial2DBorrowed,
             }
         )},
         _ => panic!("Cannot process non-Cartesian grids!")
-    };
-    let result = PyDict::new(py);
-    result.set_item("time", time)?;
-    for (state, key) in [state.S,state.I,state.R].iter().zip(&["S","I","R"]) {
-        let arr = state.to_pyarray(py);
-        let arr = arr.reshape([nx,ny]).unwrap();
-        result.set_item(key, arr)?;
     }
-    Ok(result)
+}
+
+macro_rules! export_result {
+    ($py: expr, $time: expr, $state: expr, $state_type: ty, $($field:ident, $outputname:literal),*) => {
+        (|time, state: $state_type, py| {
+            let (nx,ny) = get_grid_dims(&state.grid);
+            let result = PyDict::new(py);
+            result.set_item("time", time)?;
+            for (state, key) in [$(state.$field,)*].iter().zip(&[$($outputname,)*]) {
+                let arr = state.to_pyarray(py);
+                let arr = arr.reshape([nx,ny]).unwrap();
+                result.set_item(key, arr)?;
+            }
+            Ok(result)
+        })($time, $state, $py)
+    };
+}
+
+macro_rules! export_result_sir {
+    ($py: expr, $time: expr, $state: expr, $state_type: ty) => {
+        export_result!($py, $time, $state, $state_type, S, "S", I, "I", R, "R")
+    };
+}
+
+macro_rules! export_result_sz {
+    ($py: expr, $time: expr, $state: expr, $state_type: ty) => {
+        export_result!($py, $time, $state, $state_type, S, "S", Z, "Z")
+    };
 }
 
 /* === SIR with diffusion === */
@@ -69,7 +87,7 @@ impl SIRDiffusion2DSolver {
     -> Self {
         Self {
             solver: RKF45Solver::<SIRDiffusion2DIVP,_>::new(),
-            ivp: SIRDiffusion2DIVP::new(params.params.clone(), diff_params.diff_params.clone(),
+            ivp: SIRDiffusion2DIVP::new(params.inner.clone(), diff_params.inner.clone(),
             state.state.clone())
         }
     }
@@ -90,9 +108,7 @@ impl SIRDiffusion2DSolver {
     /// Get result of integration
     pub fn get_result<'py>(&self, py: Python<'py>) -> PyResult<&'py PyDict> {
         let (time, state) = self.ivp.get_result();
-        // Extract result dimensions
-
-        export_result(time, &state, py)
+        export_result_sir!(py, time, &state, &SIRStateSpatial2DBorrowed)
     }
 }
 
@@ -114,8 +130,8 @@ impl SIRDDFT2DSolver {
     -> Self {
         SIRDDFT2DSolver {
             solver: RKF45Solver::<SIRDDFT2DIVP,_>::new(),
-            ivp: SIRDDFT2DIVP::new(params.params.clone(), diff_params.diff_params.clone(), 
-                ddft_params.ddft_params.clone(), state.state.clone(), num_threads)
+            ivp: SIRDDFT2DIVP::new(params.inner.clone(), diff_params.inner.clone(), 
+                ddft_params.inner.clone(), state.state.clone(), num_threads)
         }
     }
 
@@ -135,6 +151,49 @@ impl SIRDDFT2DSolver {
     /// Get result of integration
     pub fn get_result<'py>(&self, py: Python<'py>) -> PyResult<&'py PyDict> {
         let (time, state) = self.ivp.get_result();
-        export_result(time, &state, py)
+        export_result_sir!(py, time, &state, &SIRStateSpatial2DBorrowed)
+    }
+}
+
+/* == SZ-DDFT == */
+
+#[pyclass]
+#[pyo3(text_signature = "(sir_parameters, diffusion_parameters, ddft_parameters, state_2d, num_threads)")]
+/// Solver for the 2D SIR DDFT model
+pub struct SZDDFT2DSolver {
+    solver: RKF45Solver<SZDDFT2DIVP,f64>,
+    ivp: SZDDFT2DIVP
+}
+
+#[pymethods]
+impl SZDDFT2DSolver {
+    #[new]
+    pub fn new(params: &SZParameters, diff_params: &SZDiffusionParameters,
+        ddft_params: &SZDDFTParameters, state: &SZStateSpatial2D, num_threads: usize) 
+    -> Self {
+        Self {
+            solver: RKF45Solver::<SZDDFT2DIVP,_>::new(),
+            ivp: SZDDFT2DIVP::new(params.inner.clone(), diff_params.inner.clone(), 
+                ddft_params.inner.clone(), state.state.clone(), num_threads)
+        }
+    }
+
+    #[pyo3(text_signature = "(time)")]
+    /// Add time to the total integration time
+    pub fn add_time(&mut self, time: f64) {
+        self.ivp.add_time(time);
+    }    
+    
+    #[pyo3(text_signature = "()")]
+    /// Integrate to the current integration time
+    pub fn integrate(&mut self) {
+        self.solver.integrate(&mut self.ivp);
+    }
+
+    #[pyo3(text_signature = "()")]
+    /// Get result of integration
+    pub fn get_result<'py>(&self, py: Python<'py>) -> PyResult<&'py PyDict> {
+        let (time, state) = self.ivp.get_result();
+        export_result_sz!(py, time, &state, &SZStateSpatial2DBorrowed)
     }
 }

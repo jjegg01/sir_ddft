@@ -1,22 +1,45 @@
+#!/usr/bin/env python3
+
 import numpy as np
 from numpy import pi, sqrt
 
 import os, os.path
-import sys
-sys.path.append(os.path.abspath(os.path.join(__file__, "../../../target/release")))
 import sir_ddft
 
-from common_2d import run_sim
+from common import run_sim
 
-L=10
-N=512
-params = sir_ddft.SIRParameters(1.0,0.1,0.0)
-diff_params = sir_ddft.SIRDiffusionParameters(0.01,0.01,0.01)
-ddft_params = sir_ddft.SIRDDFTParameters(1.0,1.0,1.0,-10,100,-30,100)
-grid = sir_ddft.Grid2D.new_equidistant(0,L,0,L,N,N)
-S = lambda x,y: np.exp(-1/(L*2.0*L/50.0)*((x-L/2)**2 + (y-L/2)**2)) * 2.832
-I = lambda x,y: 0.001*S(x,y)
-state  = sir_ddft.SIRStateSpatial2D(grid, lambda x,y: [S(x,y),I(x,y),0.0])
+# Simulation time parameters
+DT = 0.1
+STEPS = 300
+
+# Spatial simulation parameters (per dimension)
+L = 10.0
+GRIDPOINTS = 512
+
+# Initial state:
+# - Gaussian distribution with variance below and normalized to achieve a given
+#   mean population density
+# - Initially, 0.1 percent of the total population is infected, the rest is
+#   susceptible
+VARIANCE = L*L/50
+MEAN_DENSITY = 0.3543165399952919
+
+def gaussian(x,y):
+    return np.exp(-0.5 / VARIANCE * ((x - L/2)**2 + (y - L/2)**2))
+X,Y = np.meshgrid(np.linspace(0,L,GRIDPOINTS), np.linspace(0,L,GRIDPOINTS))
+dx = L/(GRIDPOINTS-1)
+norm_factor = MEAN_DENSITY / (np.sum(gaussian(X,Y)) * dx * dx / (L * L))
+def initfunc(x,y):
+    total_pop = norm_factor * gaussian(x,y)
+    return [0.999 * total_pop, 0.001 * total_pop, 0.0]
+
+# Initialize model parameters, state and solver
+params = sir_ddft.SIRParameters(1.0, 0.1, 0.0)
+diff_params = sir_ddft.SIRDiffusionParameters(0.01, 0.01, 0.01)
+ddft_params = sir_ddft.SIRDDFTParameters(1.0, 1.0, 1.0, -10, 100, -30, 100)
+grid = sir_ddft.Grid2D.new_equidistant(0, L, 0, L, GRIDPOINTS, GRIDPOINTS)
+state  = sir_ddft.SIRStateSpatial2D(grid, initfunc)
 solver = sir_ddft.SIRDDFT2DSolver(params, diff_params, ddft_params, state, 6)
 
-run_sim(solver, 0.1, 200, "SIR DDFT model")
+# Run simulation (see common.py)
+run_sim(solver, DT, STEPS, "SIR DDFT model", "sir_ddft_2d", [0,L])

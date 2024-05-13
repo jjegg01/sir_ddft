@@ -16,7 +16,7 @@
 
 use pyo3::prelude::*;
 use pyo3::types::PyDict;
-use numpy::{ToPyArray};
+use numpy::ToPyArray;
 
 use crate::*;
 
@@ -54,8 +54,8 @@ impl SIRDiffusion1DSolver {
     -> Self {
         SIRDiffusion1DSolver {
             solver: RKF45Solver::<SIRDiffusion1DIVP,_>::new(),
-            ivp: SIRDiffusion1DIVP::new(params.params.clone(),
-                diff_params.diff_params.clone(), state.state.clone())
+            ivp: SIRDiffusion1DIVP::new(params.inner.clone(),
+                diff_params.inner.clone(), state.state.clone())
         }
     }
 
@@ -97,8 +97,8 @@ impl SIRDDFT1DSolver {
     -> Self {
         SIRDDFT1DSolver {
             solver: RKF45Solver::<SIRDDFT1DIVP,_>::new(),
-            ivp: SIRDDFT1DIVP::new(params.params.clone(), diff_params.diff_params.clone(), 
-                ddft_params.ddft_params.clone(), state.state.clone(), num_threads)
+            ivp: SIRDDFT1DIVP::new(params.inner.clone(), diff_params.inner.clone(), 
+                ddft_params.inner.clone(), state.state.clone(), num_threads)
         }
     }
 

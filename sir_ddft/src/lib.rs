@@ -43,6 +43,7 @@ mod sir_diffusion_solver_1d;
 mod sir_diffusion_solver_2d;
 mod sir_ddft_solver_1d;
 mod sir_ddft_solver_2d;
+mod sz_ddft_sover_2d;
 mod helpers;
 
 pub use sir::*;
@@ -51,3 +52,4 @@ pub use sir_diffusion_solver_1d::*;
 pub use sir_diffusion_solver_2d::*;
 pub use sir_ddft_solver_1d::*;
 pub use sir_ddft_solver_2d::*;
+pub use sz_ddft_sover_2d::*;

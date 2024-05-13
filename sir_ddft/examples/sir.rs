@@ -44,7 +44,7 @@ pub fn main() -> ExitCode {
 
     // -- Graphical output --
 
-    if let Err(e) = common::plot(result.as_slice(), None, "SIR model", "sir.npz") {
+    if let Err(e) = common::plot(result.as_slice(), None, "SIR model", "sir") {
         println!("Error: {}", e);
         ExitCode::FAILURE
     }

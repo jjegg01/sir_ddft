@@ -58,7 +58,7 @@ pub fn main() -> ExitCode {
     progress.finish();
     // -- Graphical output --
 
-    if let Err(e) = common::plot(result.as_slice(), Some((0.,DOMAINSIZE)), "SIR-DDFT model in 2D", "sir_ddft_2d.npz") {
+    if let Err(e) = common::plot(result.as_slice(), Some((0.,DOMAINSIZE)), "SIR-DDFT model in 2D", "sir_ddft_2d") {
         println!("Error: {}", e);
         ExitCode::FAILURE
     }

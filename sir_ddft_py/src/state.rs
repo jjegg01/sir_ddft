@@ -244,3 +244,54 @@ impl SIRStateSpatial2D {
     }
 }
 
+#[pyclass]
+/// State vector for spatial SZ models in 2D
+///
+/// To create the initial state, a Grid2D as well as an initializer function initfunc are required. The initializer function takes the grid position x and y as its arguments and must return an array of two floats (!) representing the value of the S and Z fields at this point respectively
+#[pyo3(text_signature = "(grid, initfunc)")]
+pub struct SZStateSpatial2D {
+    pub (crate) state: sir_ddft::SZStateSpatial2D
+}
+
+#[pymethods]
+impl SZStateSpatial2D {
+    #[allow(non_snake_case)]
+    #[new]
+    pub fn new(grid: &Grid2D, initfunc: &PyAny) -> PyResult<Self> {
+        if !initfunc.is_callable() {
+            return Err(PyErr::new::<exceptions::PyTypeError, _>("Initfunc is not callable"));
+        }
+        Ok(Self {
+            state: sir_ddft::SZStateSpatial2D::new(grid.grid.clone(), |x,y| {
+                let ret = initfunc.call1((x,y)).expect("Error calling initfunc in grid");
+                let extract = |idx| {
+                    ret.get_item(idx)
+                        .expect("Missing value in initfunc return")
+                        .downcast::<PyFloat>()
+                        .expect("Invalid value in initfunc return").value() as f64
+                };
+                let S = extract(0);
+                let Z = extract(1);
+                (S,Z)
+            })
+        })
+    }
+
+    // Expensive getters (ownership is transferred to Python, so we must clone)
+
+    #[allow(non_snake_case)]
+    #[getter]
+    /// State vector of susceptible population
+    /// (note: this is 1D, so you might want to reshape this before plotting)
+    pub fn get_S<'py>(&self, py: Python<'py>) -> PyResult<&'py numpy::PyArray1<f64>> {
+        Ok(self.state.S.clone().into_pyarray(py))
+    }
+
+    #[allow(non_snake_case)]
+    #[getter]
+    /// State vector of infected population
+    /// (note: this is 1D, so you might want to reshape this before plotting)
+    pub fn get_Z<'py>(&self, py: Python<'py>) -> PyResult<&'py numpy::PyArray1<f64>> {
+        Ok(self.state.Z.clone().into_pyarray(py))
+    }
+}

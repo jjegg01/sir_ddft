@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 use pyo3::prelude::*;
-use pyo3::types::{PyDict};
+use pyo3::types::PyDict;
 
 use crate::*;
 
@@ -38,7 +38,7 @@ impl SIRSolver {
     pub fn new(params: &SIRParameters, state: &SIRState) -> Self {
         SIRSolver {
             solver: RKF45Solver::<SIRODEIVP,_>::new(),
-            ivp: SIRODEIVP::new(params.params.clone(), state.state)
+            ivp: SIRODEIVP::new(params.inner.clone(), state.state)
         }
     }
 

@@ -183,3 +183,63 @@ impl<'a> SIRStateSpatial2DBorrowed<'a> {
         }
     }
 }
+
+#[allow(non_snake_case)]
+#[derive(Clone)]
+pub struct SZStateSpatial2D {
+    pub S: Vec<f64>,
+    pub Z: Vec<f64>,
+    pub grid: Grid2D
+}
+
+impl SZStateSpatial2D {
+    /// Create a new state for a spatial SZ model in 2D.
+    ///
+    /// The state will be initialized on the given grid by calling `initfunc(x,y)`
+    /// at each grid point `(x,y)`.
+    #[allow(non_snake_case)]
+    pub fn new<F>(grid: Grid2D, initfunc: F) -> Self
+        where F: Fn(f64,f64) -> (f64,f64)
+    {
+        let mut S = vec![];
+        let mut Z = vec![];
+        for (x,y) in grid.grid() {
+            let result = initfunc(x,y);
+            S.push(result.0);
+            Z.push(result.1);
+        }
+        Self {
+            S,Z,grid
+        }
+    }
+}
+
+/// Borrowed view of a [SZStateSpatial2D]
+#[allow(non_snake_case)]
+pub struct SZStateSpatial2DBorrowed<'a> {
+    pub S: &'a[f64],
+    pub Z: &'a[f64],
+    pub grid: &'a Grid2D
+}
+
+impl<'a> SZStateSpatial2DBorrowed<'a> {
+    /// Create a `SIRStateSpatial2DBorrowed` from a contiguous vector of `f64`
+    /// values (first all S values, then all I values, finally all R values;
+    /// each are split into `ny` rows of length `nx`)
+    #[allow(non_snake_case)]
+    pub(crate) fn from_vec(v: &'a Vec<f64>, grid: &'a Grid2D) -> Self {
+        let n = v.len() / 2;
+        let (S,Z) = v.split_at(n);
+        Self {
+            S,Z,grid
+        }
+    }
+
+    pub fn to_owned(&self) -> SZStateSpatial2D {
+        SZStateSpatial2D {
+            S: self.S.to_owned(),
+            Z: self.Z.to_owned(),
+            grid: self.grid.clone()
+        }
+    }
+}
