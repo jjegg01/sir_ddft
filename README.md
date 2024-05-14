@@ -1,6 +1,6 @@
 [![crates.io](https://img.shields.io/crates/v/sir_ddft.svg)](https://crates.io/crates/sir_ddft)
 [![Documentation](https://docs.rs/sir_ddft/badge.svg)](https://docs.rs/sir_ddft/)
-[![Documentation for Python bindings](https://img.shields.io/badge/docs--py-1.0.1-yellow)](https://jjegg01.github.io/sir_ddft/pydoc/)
+[![Documentation for Python bindings](https://img.shields.io/badge/docs--py-2.0.0-yellow)](https://jjegg01.github.io/sir_ddft/pydoc/v2.0.0/)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4702572.svg)](https://doi.org/10.5281/zenodo.4702572)
 [![Funding provided by DFG WI 4170/3-1](https://img.shields.io/badge/DFG%20funded-WI%204170%2F3--1-blue)](https://www.dfg.de/foerderung/programme/einzelfoerderung/emmy_noether/index.html)
 
