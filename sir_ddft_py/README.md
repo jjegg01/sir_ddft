@@ -9,6 +9,7 @@ Requirements
 - Python >= 3.7
 - `numpy` >= 1.16.0 (e.g. via pip)
 - Optional, but strongly recommended: `maturin` (e.g. via pip)
+- Optional, only required for building the documentation: `pdoc3` (e.g. via pip)
 
 Build instructions for building from source
 -------------------------------------------
@@ -28,3 +29,7 @@ maturin develop --release
 ```
 - You can now import `sir_ddft` from any Python Skript running inside your virtualenv
 (see the `examples` directory for some basic usage examples)
+- Optional: Build the documentation after installing `pdoc3`
+```
+makeDoc.sh
+```
