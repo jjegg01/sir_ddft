@@ -3,6 +3,7 @@
 [![Documentation for Python bindings](https://img.shields.io/badge/docs--py-2.0.0-yellow)](https://jjegg01.github.io/sir_ddft/pydoc/v2.0.0/)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4702572.svg)](https://doi.org/10.5281/zenodo.4702572)
 [![Funding provided by DFG WI 4170/3-1](https://img.shields.io/badge/DFG%20funded-WI%204170%2F3--1-blue)](https://www.dfg.de/foerderung/programme/einzelfoerderung/emmy_noether/index.html)
+[![Funding provided by DFG Project ID 433682494 - SFB 1459](https://img.shields.io/badge/DFG%20funded-Project%20ID%20433682494%20--%20SFB%201459%20-blue)](https://gepris.dfg.de/gepris/projekt/433682494?context=projekt&task=showDetail&id=433682494&)
 
 `sir_ddft` - A Rust implementation of the SIR-DDFT model
 ======================================================
